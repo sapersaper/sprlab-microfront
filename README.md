@@ -159,7 +159,7 @@ Create a client-side plugin:
 
 ```js
 // plugins/microfront.client.js
-import { sprRemoteLegacy } from '@sprlab/microfront/remote'
+import { sprRemoteLegacy } from '@sprlab/microfront/dist/remote.js'
 
 export default ({ app }) => {
   sprRemoteLegacy.init({
@@ -174,14 +174,17 @@ Register it in `nuxt.config.js`:
 ```js
 plugins: [
   { src: '~/plugins/microfront.client.js', mode: 'client' }
-]
+],
+build: {
+  transpile: ['@sprlab/microfront']
+}
 ```
 
 #### Vue 2 setup (without Nuxt)
 
 ```js
 import Vue from 'vue'
-import { sprRemoteLegacy } from '@sprlab/microfront/remote'
+import { sprRemoteLegacy } from '@sprlab/microfront/dist/remote.js'
 import App from './App.vue'
 import router from './router'
 
@@ -196,7 +199,7 @@ new Vue({
 #### Sending and receiving messages (same API as Vue 3)
 
 ```js
-import { send, onMessage } from '@sprlab/microfront/remote'
+import { send, onMessage } from '@sprlab/microfront/dist/remote.js'
 
 onMessage((payload) => {
   console.log('Received from shell:', payload)
