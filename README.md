@@ -1,6 +1,8 @@
 # @sprlab/microfront
 
-A Vue 3 library for building micro frontend architectures using iframes. It handles iframe resizing, bidirectional messaging, and route synchronization between a shell (host) application and remote (child) applications.
+A Vue library for building micro frontend architectures using iframes. It handles iframe resizing, bidirectional messaging, and route synchronization between a shell (host) application and remote (child) applications.
+
+Supports both Vue 3 and Vue 2 / Nuxt 2 remotes.
 
 ## Features
 
@@ -147,6 +149,64 @@ function sendToShell() {
 
 The plugin automatically detects if the app is running inside an iframe. When running standalone, the plugin does nothing — the app works independently without errors.
 
+### Remote — Vue 2 / Nuxt 2
+
+For Vue 2 or Nuxt 2 applications, use `sprRemoteLegacy` instead of `sprRemote`. It provides the same functionality without depending on Vue 3 APIs.
+
+#### Nuxt 2 setup
+
+Create a client-side plugin:
+
+```js
+// plugins/microfront.client.js
+import { sprRemoteLegacy } from '@sprlab/microfront/remote'
+
+export default ({ app }) => {
+  sprRemoteLegacy.init({
+    appName: 'my-nuxt2-app',
+    router: app.router,
+  })
+}
+```
+
+Register it in `nuxt.config.js`:
+
+```js
+plugins: [
+  { src: '~/plugins/microfront.client.js', mode: 'client' }
+]
+```
+
+#### Vue 2 setup (without Nuxt)
+
+```js
+import Vue from 'vue'
+import { sprRemoteLegacy } from '@sprlab/microfront/remote'
+import App from './App.vue'
+import router from './router'
+
+sprRemoteLegacy.init({ appName: 'my-vue2-app', router })
+
+new Vue({
+  router,
+  render: h => h(App),
+}).$mount('#app')
+```
+
+#### Sending and receiving messages (same API as Vue 3)
+
+```js
+import { send, onMessage } from '@sprlab/microfront/remote'
+
+onMessage((payload) => {
+  console.log('Received from shell:', payload)
+})
+
+send({ greeting: 'hello from remote' })
+```
+
+> `sprRemoteLegacy` uses `router.afterEach()` for route synchronization, which is compatible with both Vue Router v3 and v4.
+
 ## API Reference
 
 ### Shell exports (`@sprlab/microfront/shell`)
@@ -177,7 +237,7 @@ Returns:
 
 ### Remote exports (`@sprlab/microfront/remote`)
 
-#### `sprRemote` plugin
+#### `sprRemote` plugin (Vue 3)
 
 Options:
 
@@ -186,6 +246,10 @@ Options:
 | `appName` | `string` | `'unknown'` | Identifier sent as metadata with messages |
 | `router` | `Router` | `undefined` | Vue Router instance for route synchronization |
 | `allowedOrigins` | `string[]` | `['*']` | Allowed origins for postMessage security |
+
+#### `sprRemoteLegacy.init(options)` (Vue 2 / Nuxt 2)
+
+Same options as `sprRemote`. Call directly instead of using `app.use()`.
 
 #### `send(payload: unknown)`
 
