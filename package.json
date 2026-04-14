@@ -29,7 +29,7 @@
     }
   },
   "scripts": {
-    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "build": "LIB_ENTRY=remote vite build && LIB_ENTRY=shell vite build --emptyOutDir false && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
     "test": "vitest --run"
   },
   "dependencies": {

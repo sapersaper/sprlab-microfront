@@ -8,8 +8,12 @@
  * - send: Send a message to the shell
  * - onMessage: Register a handler for messages from the shell
  */
-import '@open-iframe-resizer/core'
 import { WindowMessenger, connect } from 'penpal'
+import { initialize } from '@open-iframe-resizer/core'
+
+// Re-export to prevent tree-shaking of the iframe-resizer side-effect.
+// The child listener auto-registers on import.
+export { initialize as _iframeResizerInit }
 
 // ─── Shared types and state ───
 
