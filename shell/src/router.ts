@@ -8,7 +8,7 @@ const routes = [
   { path: '/', component: Home },
   { path: '/remote1', component: Remote1 },
   { path: '/remote2/:path(.*)*', component: Remote2 },
-  { path: '/remote3', component: Remote3 },
+  { path: '/remote3/:path(.*)*', component: Remote3 },
 ]
 
 export default createRouter({

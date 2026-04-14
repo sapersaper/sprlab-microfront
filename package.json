@@ -2,13 +2,14 @@
   "name": "microfrontend-iframe",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"yarn dev:shell\" \"yarn dev:remote1\" \"yarn dev:remote2\"",
+    "dev": "concurrently \"yarn dev:shell\" \"yarn dev:remote1\" \"yarn dev:remote2\" \"yarn dev:remote3\"",
     "dev:local": "bash scripts/toggle-dep.sh local && yarn install:all && yarn dev",
     "dev:npm": "bash scripts/toggle-dep.sh npm && yarn install:all && yarn dev",
     "dev:shell": "yarn --cwd shell dev",
     "dev:remote1": "yarn --cwd remote1 dev",
     "dev:remote2": "yarn --cwd remote2 dev",
-    "install:all": "yarn --cwd shell install && yarn --cwd remote1 install && yarn --cwd remote2 install",
+    "dev:remote3": "yarn --cwd remote3 dev",
+    "install:all": "yarn --cwd shell install && yarn --cwd remote1 install && yarn --cwd remote2 install && yarn --cwd remote3 install",
     "build": "yarn build:shell && yarn build:remote1 && yarn build:remote2",
     "build:shell": "yarn --cwd shell build",
     "build:remote1": "yarn --cwd remote1 build",
@@ -19,6 +20,7 @@
     "preview:remote2": "yarn --cwd remote2 preview"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "playwright": "^1.59.1"
   }
 }

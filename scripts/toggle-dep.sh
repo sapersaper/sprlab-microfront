@@ -50,7 +50,13 @@ case "$1" in
     show_status
     ;;
   npm)
-    VERSION="${2:-^0.0.2}"
+    # Read version from lib's package.json if not specified
+    if [ -z "$2" ]; then
+      LIB_VERSION=$(grep '"version"' libs/spr-microfront/package.json | sed 's/.*: *"\(.*\)".*/\1/')
+      VERSION="^$LIB_VERSION"
+    else
+      VERSION="$2"
+    fi
     echo "Switching to npm registry ($VERSION)..."
     for project in "${PROJECTS[@]}"; do
       set_dep "$project" "$VERSION"
@@ -61,7 +67,7 @@ case "$1" in
   *)
     echo "Usage: $0 [local|npm [version]]"
     echo "  local          Use file:../libs/spr-microfront"
-    echo "  npm [version]  Use npm registry (default: ^0.0.2)"
+    echo "  npm [version]  Use npm registry (default: read from libs/spr-microfront/package.json)"
     echo "  (no args)      Show current status"
     exit 1
     ;;

@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@sprlab/microfront": "file:../libs/spr-microfront",
+    "@sprlab/microfront": "^0.1.0",
     "vue": "^3.5.32",
     "vue-router": "^5.0.4"
   },

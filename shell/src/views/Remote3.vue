@@ -8,7 +8,7 @@
     <RemoteApp
       :src="remoteUrl"
       title="Remote 3"
-      :timeout="1000"
+      basePath="/remote3"
     />
   </div>
 </template>
