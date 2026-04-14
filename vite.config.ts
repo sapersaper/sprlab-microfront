@@ -9,7 +9,6 @@ export default defineConfig({
       entry: {
         shell: resolve(__dirname, 'src/shell/index.ts'),
         remote: resolve(__dirname, 'src/remote/index.ts'),
-        'remote-legacy': resolve(__dirname, 'src/remote-legacy/index.ts'),
       },
       formats: ['es'],
     },

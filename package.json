@@ -26,10 +26,6 @@
     "./remote": {
       "import": "./dist/remote.js",
       "types": "./dist/remote/index.d.ts"
-    },
-    "./remote-legacy": {
-      "import": "./dist/remote-legacy.js",
-      "types": "./dist/remote-legacy/index.d.ts"
     }
   },
   "scripts": {
