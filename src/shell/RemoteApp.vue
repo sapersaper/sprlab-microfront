@@ -18,7 +18,7 @@
  *
  * Communicates with the useRemote composable via provide/inject.
  */
-import { ref, computed, inject, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, inject, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { initialize } from '@open-iframe-resizer/core'
 import { WindowMessenger, connect } from 'penpal'
@@ -93,6 +93,9 @@ onMounted(async () => {
   initialSrc.value = props.basePath
     ? props.src + (remotePath.value || '')
     : props.src
+
+  // Wait for Vue to flush the DOM so the iframe has its src set
+  await nextTick()
 
   const iframe = iframeRef.value
   if (!iframe) return
