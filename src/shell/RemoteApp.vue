@@ -94,15 +94,15 @@ onMounted(async () => {
     ? props.src + (remotePath.value || '')
     : props.src
 
-  // Wait for Vue to flush the DOM so the iframe has its src set
-  await nextTick()
-
   const iframe = iframeRef.value
   if (!iframe) return
 
-  // Initialize iframe auto-resizer
-  initialize({}, iframe).then((results) => {
-    resizerCleanup = results[0]
+  // Initialize iframe auto-resizer after nextTick so the iframe has its src in the DOM.
+  // (penpal is set up immediately below — it doesn't need the src to be rendered yet)
+  nextTick(() => {
+    initialize({}, iframe).then((results) => {
+      resizerCleanup = results[0]
+    })
   })
 
   // Set up penpal connection for bidirectional messaging
