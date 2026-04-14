@@ -81,6 +81,15 @@ export const sprRemote: Plugin<SprRemoteOptions> = {
       }
     }
 
+    // Patch window.history.pushState to behave as replaceState when inside an iframe,
+    // preventing the iframe from adding entries to the browser's shared history stack.
+    // This fixes the "double back button" problem: without this, both the iframe and
+    // the shell push history entries, requiring the user to press back twice.
+    const originalPushState = window.history.pushState.bind(window.history)
+    window.history.pushState = (data: any, unused: string, url?: string | URL | null) => {
+      window.history.replaceState(data, unused, url)
+    }
+
     const connection = connect({ messenger, methods })
     state.connectionPromise = connection.promise
 

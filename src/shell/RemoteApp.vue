@@ -2,7 +2,7 @@
   <iframe
     v-show="isVisible"
     ref="iframeRef"
-    :src="resolvedSrc"
+    :src="initialSrc"
     :title="title"
     style="width: 100%; border: none;"
   />
@@ -18,7 +18,7 @@
  *
  * Communicates with the useRemote composable via provide/inject.
  */
-import { ref, computed, inject, onMounted, onUnmounted } from 'vue'
+import { ref, computed, inject, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { initialize } from '@open-iframe-resizer/core'
 import { WindowMessenger, connect } from 'penpal'
@@ -46,6 +46,11 @@ let resizerCleanup: { unsubscribe: () => void } | null = null
 let penpalConnection: { promise: Promise<unknown>; destroy: () => void } | null = null
 let timeoutId: ReturnType<typeof setTimeout> | null = null
 
+// Flag to prevent circular updates: shell→remote→shell
+let ignoreNextRouteChange = false
+// Track if this is the first route sync from the remote (initial redirect should use replace)
+let isFirstRouteSync = true
+
 // Only show iframe when connected or when server loaded without plugin
 const isVisible = computed(() => {
   if (!messenger) return true
@@ -62,11 +67,8 @@ const remotePath = computed(() => {
   return '/' + joined
 })
 
-// Build the full iframe URL by combining src with the remote sub-path
-const resolvedSrc = computed(() => {
-  if (!props.basePath) return props.src
-  return props.src + remotePath.value
-})
+// Build the initial iframe URL (set once, never changes — navigation is handled via penpal)
+const initialSrc = ref('')
 
 /**
  * Check if the remote server is reachable using a HEAD request with no-cors mode.
@@ -87,6 +89,11 @@ async function checkServerReachable(url: string): Promise<boolean> {
 }
 
 onMounted(async () => {
+  // Set the iframe src once based on the current route
+  initialSrc.value = props.basePath
+    ? props.src + (remotePath.value || '')
+    : props.src
+
   const iframe = iframeRef.value
   if (!iframe) return
 
@@ -111,11 +118,22 @@ onMounted(async () => {
       },
       /** Called by the remote when its internal route changes */
       onRemoteRouteChange(path: unknown) {
-        // Sync the shell URL with the remote's internal route
+        // Sync the shell URL with the remote's internal route.
+        // Uses push (not replace) so the browser back button creates proper history entries.
+        // The remote's router.push is patched to replace in the iframe, so the iframe
+        // itself won't add duplicate history entries.
         if (props.basePath) {
           const shellPath = props.basePath + path
           if (route.fullPath !== shellPath) {
-            router.replace(shellPath)
+            ignoreNextRouteChange = true
+            // First route sync (e.g., redirect from / to /page1) uses replace
+            // to avoid adding an extra history entry. Subsequent navigations use push.
+            if (isFirstRouteSync) {
+              isFirstRouteSync = false
+              router.replace(shellPath)
+            } else {
+              router.push(shellPath)
+            }
           }
         }
         if (messenger) messenger.handleRouteChange(path as string)
@@ -137,6 +155,27 @@ onMounted(async () => {
     messenger.setConnection(Promise.race([penpalConnection.promise, timeoutPromise]))
   }
 })
+
+// Watch for shell route changes (back/forward) and navigate the remote via penpal
+if (props.basePath) {
+  watch(
+    () => remotePath.value,
+    async (newPath) => {
+      if (ignoreNextRouteChange) {
+        ignoreNextRouteChange = false
+        return
+      }
+      if (!penpalConnection) return
+      const targetPath = newPath || '/'
+      try {
+        const remote = await penpalConnection.promise as Record<string, (p: string) => Promise<void>>
+        await remote.onShellNavigate(targetPath)
+      } catch {
+        // Connection not ready yet
+      }
+    },
+  )
+}
 
 // Clean up all resources on component unmount
 onUnmounted(() => {
