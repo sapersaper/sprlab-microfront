@@ -85,6 +85,19 @@ function initCore(options: SprRemoteOptions): RemoteState | null {
   const connection = connect({ messenger, methods })
   state.connectionPromise = connection.promise
 
+  // Once penpal connects, send the current route to the shell.
+  // This handles redirects that happened before the connection was established
+  // (e.g., / → /page1 in the remote's router).
+  if (router) {
+    connection.promise.then((remote: any) => {
+      const currentPath = router.currentRoute?.value?.fullPath
+        ?? router.currentRoute?.fullPath
+      if (currentPath) {
+        remote.onRemoteRouteChange(currentPath)
+      }
+    }).catch(() => {})
+  }
+
   return state
 }
 
@@ -103,17 +116,15 @@ export const sprRemote = {
 
     app.provide(REMOTE_STATE_KEY, state)
 
-    // Use Vue 3 watch() for route synchronization
+    // Use router.afterEach() for route synchronization (works with Vue Router v3, v4, v5)
     const { router } = options
-    if (router) {
-      import('vue').then(({ watch }) => {
-        watch(
-          () => router.currentRoute.value.fullPath,
-          async (newPath: string) => {
-            const remote = await state.connectionPromise as Record<string, (p: string) => Promise<void>>
-            await remote.onRemoteRouteChange(newPath)
-          },
-        )
+    if (router && typeof router.afterEach === 'function') {
+      router.afterEach((to: any) => {
+        if (state.connectionPromise) {
+          state.connectionPromise.then((remote: any) => {
+            remote.onRemoteRouteChange(to.fullPath)
+          })
+        }
       })
     }
   },
