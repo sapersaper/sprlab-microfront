@@ -1,13 +1,13 @@
 {
   "name": "@sprlab/microfront",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "type": "module",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/sprlab/microfront.git"
   },
-  "description": "Vue 3 micro frontend library using iframes with automatic resizing, messaging, and route synchronization",
+  "description": "Vue micro frontend library using iframes with automatic resizing, messaging, and route synchronization (Vue 2 & 3)",
   "keywords": [
     "vue",
     "microfrontend",
@@ -26,6 +26,10 @@
     "./remote": {
       "import": "./dist/remote.js",
       "types": "./dist/remote/index.d.ts"
+    },
+    "./remote-legacy": {
+      "import": "./dist/remote-legacy.js",
+      "types": "./dist/remote-legacy/index.d.ts"
     }
   },
   "scripts": {
