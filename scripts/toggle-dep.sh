@@ -6,7 +6,7 @@
 #   ./scripts/toggle-dep.sh npm 0.0.3    # Switch to specific npm version
 #   ./scripts/toggle-dep.sh              # Show current mode
 
-PROJECTS=("shell" "remote1" "remote2")
+PROJECTS=("shell" "remote1" "remote2" "remote3")
 PKG="@sprlab/microfront"
 LOCAL_PATH="file:../libs/spr-microfront"
 

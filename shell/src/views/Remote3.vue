@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <!-- <div> -->
     <article v-if="isLoading" aria-busy="true">Conectando con Remote 3...</article>
     <article v-else-if="isError">Error al conectar con Remote 3</article>
     <article v-else-if="isNoPlugin">
@@ -9,8 +9,9 @@
       :src="remoteUrl"
       title="Remote 3"
       basePath="/remote3"
+      fullHeight
     />
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup lang="ts">

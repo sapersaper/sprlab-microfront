@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@picocss/pico": "^2.1.1",
-    "@sprlab/microfront": "^0.1.0",
+    "@sprlab/microfront": "file:../libs/spr-microfront",
     "vue": "^3.5.32",
     "vue-router": "^5.0.4"
   },

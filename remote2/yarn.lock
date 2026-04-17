@@ -319,9 +319,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sprlab/microfront@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@sprlab/microfront@npm:0.1.0"
+"@sprlab/microfront@file:../libs/spr-microfront::locator=remote2%40workspace%3A.":
+  version: 0.1.1
+  resolution: "@sprlab/microfront@file:../libs/spr-microfront#../libs/spr-microfront::hash=2a9eb2&locator=remote2%40workspace%3A."
   dependencies:
     "@open-iframe-resizer/core": "npm:^2.3.1"
     penpal: "npm:^7.0.6"
@@ -331,7 +331,7 @@ __metadata:
   peerDependenciesMeta:
     vue-router:
       optional: true
-  checksum: 10c0/1278f71c12cd767d18115b237522ab415b1ebd2ef90d75027542f1d42daf5b113a8c86ee7522526f3788a893e87a6708931c1a9e7bb2a156acf45531d47db6cd
+  checksum: 10c0/04d89a3ecc7d9ebe694b31d114e32c373fbc52b2e052dfe39729c334e99e45b7f136d8fa664874e2d61d66377cac6b79a0daa05169cbecf0e51e1239dab58d88
   languageName: node
   linkType: hard
 
@@ -1254,7 +1254,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "remote2@workspace:."
   dependencies:
-    "@sprlab/microfront": "npm:^0.1.0"
+    "@sprlab/microfront": "file:../libs/spr-microfront"
     "@vitejs/plugin-vue": "npm:^6.0.5"
     vite: "npm:^8.0.4"
     vue: "npm:^3.5.32"

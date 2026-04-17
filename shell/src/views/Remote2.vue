@@ -3,6 +3,7 @@
     :src="remoteUrl"
     title="Remote 2"
     basePath="/remote2"
+    fullHeight
   />
 </template>
 

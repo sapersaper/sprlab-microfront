@@ -2513,9 +2513,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sprlab/microfront@npm:^0.0.7":
-  version: 0.0.7
-  resolution: "@sprlab/microfront@npm:0.0.7"
+"@sprlab/microfront@file:../libs/spr-microfront::locator=remote3%40workspace%3A.":
+  version: 0.1.1
+  resolution: "@sprlab/microfront@file:../libs/spr-microfront#../libs/spr-microfront::hash=2a9eb2&locator=remote3%40workspace%3A."
   dependencies:
     "@open-iframe-resizer/core": "npm:^2.3.1"
     penpal: "npm:^7.0.6"
@@ -2525,7 +2525,7 @@ __metadata:
   peerDependenciesMeta:
     vue-router:
       optional: true
-  checksum: 10c0/84cfd9606785b162811a070a325cc4f7f7755b07c2f30b0909429a0185b77c09fb852b369dea00f5adf779abc4a7b4491da54f70e0b169531b4bb5057a8f6ee6
+  checksum: 10c0/04d89a3ecc7d9ebe694b31d114e32c373fbc52b2e052dfe39729c334e99e45b7f136d8fa664874e2d61d66377cac6b79a0daa05169cbecf0e51e1239dab58d88
   languageName: node
   linkType: hard
 
@@ -10233,7 +10233,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "remote3@workspace:."
   dependencies:
-    "@sprlab/microfront": "npm:^0.0.7"
+    "@sprlab/microfront": "file:../libs/spr-microfront"
     nuxt: "npm:^2.18.1"
   languageName: unknown
   linkType: soft
