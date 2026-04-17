@@ -9,7 +9,7 @@
  * - onMessage: Register a handler for messages from the shell
  */
 import { WindowMessenger, connect } from 'penpal'
-import { initialize } from '@open-iframe-resizer/core'
+import { initialize, initializeChildListener } from '@open-iframe-resizer/core'
 
 // Re-export to prevent tree-shaking of the iframe-resizer side-effect.
 // The child listener auto-registers on import.
@@ -44,6 +44,9 @@ function isInsideIframe(): boolean {
 
 function initCore(options: SprRemoteOptions): RemoteState | null {
   if (!isInsideIframe()) return null
+
+  // Initialize the iframe resizer child listener
+  initializeChildListener()
 
   const { router, appName = 'unknown', allowedOrigins = ['*'] } = options
 
@@ -84,6 +87,17 @@ function initCore(options: SprRemoteOptions): RemoteState | null {
 
   const connection = connect({ messenger, methods })
   state.connectionPromise = connection.promise
+
+  // Observe content height changes and send to shell via penpal
+  connection.promise.then((remote: any) => {
+    const observer = new ResizeObserver(() => {
+      const height = document.documentElement.scrollHeight
+      remote.onRemoteHeight(height)
+    })
+    observer.observe(document.documentElement)
+    // Send initial height
+    remote.onRemoteHeight(document.documentElement.scrollHeight)
+  }).catch(() => {})
 
   // Once penpal connects, send the current route to the shell.
   // This handles redirects that happened before the connection was established
