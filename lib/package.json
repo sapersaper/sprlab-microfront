@@ -1,0 +1,82 @@
+{
+  "name": "@sprlab/microfront",
+  "version": "0.2.0",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sprlab/microfront.git"
+  },
+  "description": "Micro frontend library using iframes with automatic resizing, messaging, and route synchronization",
+  "keywords": [
+    "vue",
+    "react",
+    "microfrontend",
+    "iframe",
+    "micro-frontend",
+    "penpal"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./core": {
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core.js"
+    },
+    "./vue": {
+      "types": "./dist/vue/index.d.ts",
+      "default": "./dist/vue.js"
+    },
+    "./shell": {
+      "types": "./dist/shell/index.d.ts",
+      "default": "./dist/shell.js"
+    },
+    "./vue/shell": {
+      "types": "./dist/shell/index.d.ts",
+      "default": "./dist/shell.js"
+    },
+    "./remote": {
+      "types": "./dist/remote/index.d.ts",
+      "default": "./dist/remote.js"
+    },
+    "./vue/remote": {
+      "types": "./dist/remote/index.d.ts",
+      "default": "./dist/remote.js"
+    },
+    "./react/remote": {
+      "types": "./dist/react/remote.d.ts",
+      "default": "./dist/react-remote.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "test": "vitest --run"
+  },
+  "dependencies": {
+    "penpal": "^7.0.6"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "vue-router": "^4.0.0 || ^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "vue": {
+      "optional": true
+    },
+    "vue-router": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^18.0.1",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8",
+    "vitest": "^4.1.4",
+    "vue": "^3.5.32",
+    "vue-router": "^5.0.4",
+    "vue-tsc": "^2.2.12"
+  }
+}

@@ -1,26 +1,30 @@
 {
-  "name": "microfrontend-iframe",
+  "name": "microfront-workspace",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "concurrently \"yarn dev:shell\" \"yarn dev:remote1\" \"yarn dev:remote2\" \"yarn dev:remote3\"",
-    "dev:local": "bash scripts/toggle-dep.sh local && yarn install:all && yarn dev",
-    "dev:npm": "bash scripts/toggle-dep.sh npm && yarn install:all && yarn dev",
-    "dev:shell": "yarn --cwd shell dev",
-    "dev:remote1": "yarn --cwd remote1 dev",
-    "dev:remote2": "yarn --cwd remote2 dev",
-    "dev:remote3": "yarn --cwd remote3 dev",
-    "install:all": "yarn --cwd shell install && yarn --cwd remote1 install && yarn --cwd remote2 install && yarn --cwd remote3 install",
-    "build": "yarn build:shell && yarn build:remote1 && yarn build:remote2",
-    "build:shell": "yarn --cwd shell build",
-    "build:remote1": "yarn --cwd remote1 build",
-    "build:remote2": "yarn --cwd remote2 build",
-    "preview": "concurrently \"yarn preview:shell\" \"yarn preview:remote1\" \"yarn preview:remote2\"",
-    "preview:shell": "yarn --cwd shell preview",
-    "preview:remote1": "yarn --cwd remote1 preview",
-    "preview:remote2": "yarn --cwd remote2 preview"
+    "build": "yarn --cwd lib build",
+    "test": "yarn --cwd lib test",
+    "kill-ports": "bash scripts/kill-ports.sh",
+    "dev": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue-connection\" \"yarn dev:remote-vue-route\" \"yarn dev:remote-vue-fullHeight\"",
+    "dev:vue2": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue2-connection\" \"yarn dev:remote-vue2-route\" \"yarn dev:remote-vue2-fullHeight\"",
+    "dev:react": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-react-connection\" \"yarn dev:remote-react-route\" \"yarn dev:remote-react-fullHeight\"",
+    "dev:all": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue-connection\" \"yarn dev:remote-vue-route\" \"yarn dev:remote-vue-fullHeight\" \"yarn dev:remote-vue2-connection\" \"yarn dev:remote-vue2-route\" \"yarn dev:remote-vue2-fullHeight\" \"yarn dev:remote-react-connection\" \"yarn dev:remote-react-route\" \"yarn dev:remote-react-fullHeight\"",
+    "dev:shell": "yarn --cwd examples/vue/shell dev",
+    "dev:remote-vue-connection": "yarn --cwd examples/vue/remote-vue-connection dev",
+    "dev:remote-vue-route": "yarn --cwd examples/vue/remote-vue-route dev",
+    "dev:remote-vue-fullHeight": "yarn --cwd examples/vue/remote-vue-fullHeight dev",
+    "dev:remote-vue2-connection": "yarn --cwd examples/vue/remote-vue2-connection dev",
+    "dev:remote-vue2-route": "yarn --cwd examples/vue/remote-vue2-route dev",
+    "dev:remote-vue2-fullHeight": "yarn --cwd examples/vue/remote-vue2-fullHeight dev",
+    "dev:remote-react-connection": "yarn --cwd examples/react/remote-react-connection dev",
+    "dev:remote-react-route": "yarn --cwd examples/react/remote-react-route dev",
+    "dev:remote-react-fullHeight": "yarn --cwd examples/react/remote-react-fullHeight dev",
+    "use:local": "node scripts/use-lib.js local",
+    "use:npm": "node scripts/use-lib.js npm",
+    "install:all": "yarn --cwd lib install && yarn --cwd examples/vue/shell install && yarn --cwd examples/vue/remote-vue-connection install && yarn --cwd examples/vue/remote-vue-route install && yarn --cwd examples/vue/remote-vue-fullHeight install && yarn --cwd examples/vue/remote-vue2-connection install && yarn --cwd examples/vue/remote-vue2-route install && yarn --cwd examples/vue/remote-vue2-fullHeight install && yarn --cwd examples/react/remote-react-connection install && yarn --cwd examples/react/remote-react-route install && yarn --cwd examples/react/remote-react-fullHeight install"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2",
-    "playwright": "^1.59.1"
+    "concurrently": "^9.1.2"
   }
 }

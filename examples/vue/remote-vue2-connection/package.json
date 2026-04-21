@@ -1,0 +1,13 @@
+{
+  "name": "remote-vue2-connection",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build"
+  },
+  "dependencies": {
+    "@sprlab/microfront": "file:../../../lib",
+    "nuxt": "^2.18.1",
+    "penpal": "^7.0.6"
+  }
+}

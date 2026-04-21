@@ -1,0 +1,12 @@
+{
+  "name": "remote3",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build"
+  },
+  "dependencies": {
+    "@sprlab/microfront": "^0.1.2",
+    "nuxt": "^2.18.1"
+  }
+}
