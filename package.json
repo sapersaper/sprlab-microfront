@@ -9,7 +9,8 @@
     "dev": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue-connection\" \"yarn dev:remote-vue-route\" \"yarn dev:remote-vue-fullHeight\"",
     "dev:vue2": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue2-connection\" \"yarn dev:remote-vue2-route\" \"yarn dev:remote-vue2-fullHeight\"",
     "dev:react": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-react-connection\" \"yarn dev:remote-react-route\" \"yarn dev:remote-react-fullHeight\"",
-    "dev:all": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue-connection\" \"yarn dev:remote-vue-route\" \"yarn dev:remote-vue-fullHeight\" \"yarn dev:remote-vue2-connection\" \"yarn dev:remote-vue2-route\" \"yarn dev:remote-vue2-fullHeight\" \"yarn dev:remote-react-connection\" \"yarn dev:remote-react-route\" \"yarn dev:remote-react-fullHeight\"",
+    "dev:angular": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-angular-connection\" \"yarn dev:remote-angular-route\" \"yarn dev:remote-angular-fullHeight\"",
+    "dev:all": "bash scripts/kill-ports.sh && concurrently \"yarn dev:shell\" \"yarn dev:remote-vue-connection\" \"yarn dev:remote-vue-route\" \"yarn dev:remote-vue-fullHeight\" \"yarn dev:remote-vue2-connection\" \"yarn dev:remote-vue2-route\" \"yarn dev:remote-vue2-fullHeight\" \"yarn dev:remote-react-connection\" \"yarn dev:remote-react-route\" \"yarn dev:remote-react-fullHeight\" \"yarn dev:remote-angular-connection\" \"yarn dev:remote-angular-route\" \"yarn dev:remote-angular-fullHeight\"",
     "dev:shell": "yarn --cwd examples/vue/shell dev",
     "dev:remote-vue-connection": "yarn --cwd examples/vue/remote-vue-connection dev",
     "dev:remote-vue-route": "yarn --cwd examples/vue/remote-vue-route dev",
@@ -20,9 +21,12 @@
     "dev:remote-react-connection": "yarn --cwd examples/react/remote-react-connection dev",
     "dev:remote-react-route": "yarn --cwd examples/react/remote-react-route dev",
     "dev:remote-react-fullHeight": "yarn --cwd examples/react/remote-react-fullHeight dev",
+    "dev:remote-angular-connection": "yarn --cwd examples/angular/remote-angular-connection dev",
+    "dev:remote-angular-route": "yarn --cwd examples/angular/remote-angular-route dev",
+    "dev:remote-angular-fullHeight": "yarn --cwd examples/angular/remote-angular-fullHeight dev",
     "use:local": "node scripts/use-lib.js local",
     "use:npm": "node scripts/use-lib.js npm",
-    "install:all": "yarn --cwd lib install && yarn --cwd examples/vue/shell install && yarn --cwd examples/vue/remote-vue-connection install && yarn --cwd examples/vue/remote-vue-route install && yarn --cwd examples/vue/remote-vue-fullHeight install && yarn --cwd examples/vue/remote-vue2-connection install && yarn --cwd examples/vue/remote-vue2-route install && yarn --cwd examples/vue/remote-vue2-fullHeight install && yarn --cwd examples/react/remote-react-connection install && yarn --cwd examples/react/remote-react-route install && yarn --cwd examples/react/remote-react-fullHeight install"
+    "install:all": "yarn --cwd lib install && yarn --cwd examples/vue/shell install && yarn --cwd examples/vue/remote-vue-connection install && yarn --cwd examples/vue/remote-vue-route install && yarn --cwd examples/vue/remote-vue-fullHeight install && yarn --cwd examples/vue/remote-vue2-connection install && yarn --cwd examples/vue/remote-vue2-route install && yarn --cwd examples/vue/remote-vue2-fullHeight install && yarn --cwd examples/react/remote-react-connection install && yarn --cwd examples/react/remote-react-route install && yarn --cwd examples/react/remote-react-fullHeight install && yarn --cwd examples/angular/remote-angular-connection install && yarn --cwd examples/angular/remote-angular-route install && yarn --cwd examples/angular/remote-angular-fullHeight install"
   },
   "devDependencies": {
     "concurrently": "^9.1.2"

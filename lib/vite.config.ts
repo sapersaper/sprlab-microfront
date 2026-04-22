@@ -12,6 +12,7 @@ export default defineConfig({
         shell: resolve(__dirname, 'src/shell/index.ts'),
         remote: resolve(__dirname, 'src/remote/index.ts'),
         'react-remote': resolve(__dirname, 'src/react/remote.ts'),
+        'angular-remote': resolve(__dirname, 'src/angular/remote.ts'),
       },
       formats: ['es'],
     },

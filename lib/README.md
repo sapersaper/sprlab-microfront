@@ -2,7 +2,7 @@
 
 A framework-agnostic library for building micro frontend architectures using iframes. It handles iframe resizing, bidirectional messaging, and route synchronization between a shell (host) application and remote (child) applications.
 
-Supports Vue 3, Vue 2 / Nuxt 2, and React remotes.
+Supports Vue 3, Vue 2 / Nuxt 2, React, and Angular remotes.
 
 ## Features
 
@@ -11,7 +11,7 @@ Supports Vue 3, Vue 2 / Nuxt 2, and React remotes.
 - Bidirectional messaging between shell and remotes via penpal
 - Route synchronization between shell and remote routers
 - Connection status tracking (loading, connected, error, no-plugin detection)
-- Framework-agnostic core with Vue and React adapters
+- Framework-agnostic core with Vue, React, and Angular adapters
 - Configurable connection timeout and allowed origins
 
 ## Installation
@@ -28,6 +28,7 @@ yarn add @sprlab/microfront
 | `@sprlab/microfront/vue/shell` | Vue 3 shell (RemoteApp component, useRemote composable) |
 | `@sprlab/microfront/vue/remote` | Vue 3 remote (sprRemote plugin, send, onMessage) |
 | `@sprlab/microfront/react/remote` | React remote (initReactRemote, createReactRouterAdapter) |
+| `@sprlab/microfront/angular/remote` | Angular remote (initAngularRemote, createAngularRouterAdapter) |
 
 Legacy aliases (backward compatible):
 | `@sprlab/microfront/shell` | Same as `./vue/shell` |
@@ -158,6 +159,40 @@ connection?.onMessage((payload) => console.log(payload))
 
 Returns `null` if not inside an iframe.
 
+### Remote — Angular
+
+```ts
+// app.config.ts
+import { ApplicationConfig, APP_INITIALIZER, inject } from '@angular/core';
+import { provideRouter, Router } from '@angular/router';
+import { initAngularRemote } from '@sprlab/microfront/angular/remote';
+import { routes } from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        const router = inject(Router);
+        return () => initAngularRemote({ appName: 'my-angular-app', router });
+      },
+    },
+  ],
+};
+```
+
+Without router (messaging only):
+
+```ts
+import { initAngularRemote } from '@sprlab/microfront/angular/remote';
+
+const connection = initAngularRemote({ appName: 'my-angular-app' });
+connection?.send({ greeting: 'hello' });
+connection?.onMessage((payload) => console.log(payload));
+```
+
 ### Remote — Vue 2 / Nuxt 2
 
 ```js
@@ -217,6 +252,16 @@ build: {
 
 Returns `RemoteConnection | null` (null if not in iframe).
 
+### initAngularRemote (`@sprlab/microfront/angular/remote`)
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `appName` | `string` | `'unknown'` | Identifier for messages |
+| `router` | `Router` | `undefined` | Angular Router instance (@angular/router) |
+| `allowedOrigins` | `string[]` | `['*']` | Allowed origins for postMessage |
+
+Returns `RemoteConnection | null` (null if not in iframe).
+
 ## Architecture
 
 ```
@@ -228,7 +273,8 @@ Returns `RemoteConnection | null` (null if not in iframe).
 │  │                                 │    │
 │  │  ┌───────────────────────────┐  │    │
 │  │  │ Remote (any framework)    │  │    │
-│  │  │ Vue 3 / Nuxt 2 / React   │  │    │
+│  │  │ Vue 3 / Nuxt 2 / React  │  │    │
+│  │  │ / Angular               │  │    │
 │  │  └───────────────────────────┘  │    │
 │  │                                 │    │
 │  │  penpal ←→ messaging            │    │

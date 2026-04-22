@@ -9,6 +9,9 @@ import Vue2FullHeight from '@/views/Vue2FullHeight.vue'
 import ReactConnection from '@/views/ReactConnection.vue'
 import ReactRoute from '@/views/ReactRoute.vue'
 import ReactFullHeight from '@/views/ReactFullHeight.vue'
+import AngularConnection from '@/views/AngularConnection.vue'
+import AngularRoute from '@/views/AngularRoute.vue'
+import AngularFullHeight from '@/views/AngularFullHeight.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -21,6 +24,9 @@ const routes = [
   { path: '/react-connection', component: ReactConnection },
   { path: '/react-route/:path(.*)*', component: ReactRoute },
   { path: '/react-fullheight/:path(.*)*', component: ReactFullHeight },
+  { path: '/angular-connection', component: AngularConnection },
+  { path: '/angular-route/:path(.*)*', component: AngularRoute },
+  { path: '/angular-fullheight/:path(.*)*', component: AngularFullHeight },
 ]
 
 export default createRouter({

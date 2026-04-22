@@ -1,6 +1,6 @@
 {
   "name": "@sprlab/microfront",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -11,6 +11,7 @@
   "keywords": [
     "vue",
     "react",
+    "angular",
     "microfrontend",
     "iframe",
     "micro-frontend",
@@ -47,6 +48,10 @@
     "./react/remote": {
       "types": "./dist/react/remote.d.ts",
       "default": "./dist/react-remote.js"
+    },
+    "./angular/remote": {
+      "types": "./dist/angular/remote.d.ts",
+      "default": "./dist/angular-remote.js"
     }
   },
   "scripts": {

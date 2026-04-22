@@ -21,7 +21,7 @@ const root = resolve(import.meta.dirname, '..')
 const libPkg = JSON.parse(readFileSync(join(root, 'lib', 'package.json'), 'utf8'))
 const npmVersion = `^${libPkg.version}`
 
-const frameworkDirs = ['vue', 'react']
+const frameworkDirs = ['vue', 'react', 'angular']
 
 for (const fw of frameworkDirs) {
   const examplesDir = join(root, 'examples', fw)

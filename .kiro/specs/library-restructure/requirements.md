@@ -2,113 +2,136 @@
 
 ## Introduction
 
-The `@sprlab/microfront` library currently bundles all its logic — penpal connection management, iframe resizing, messaging, history patching, and route synchronization — tightly coupled to Vue (Vue components, provide/inject, Vue plugins). This restructure separates the library into a framework-agnostic core package (`@sprlab/microfront/core`) and framework-specific wrappers (starting with `@sprlab/microfront/vue`), enabling future support for React, Angular, and other frameworks. The project structure is also reorganized so that example applications live under `examples/vue/` instead of at the root level.
+The `@sprlab/microfront` library provides a micro frontend architecture using iframes with automatic resizing, bidirectional messaging, and route synchronization. The library is structured as a framework-agnostic core with framework-specific adapters for Vue 3, Vue 2/Nuxt 2, React, and Angular. The project includes example applications for each framework to validate functionality.
 
 ## Glossary
 
 - **Core_Module**: The framework-agnostic JavaScript module exported as `@sprlab/microfront/core`, containing pure logic for penpal connection, ResizeObserver-based iframe resizing, bidirectional messaging, iframe detection, and history patching.
-- **Vue_Module**: The Vue-specific wrapper module exported as `@sprlab/microfront/vue`, containing RemoteApp component, useRemote composable, sprRemote plugin, and sprRemoteLegacy initializer.
-- **Shell**: The host application that embeds remote micro frontends via iframes.
-- **Remote**: A child application embedded inside an iframe within the Shell.
+- **Vue_Module**: The Vue-specific wrapper module exported as `@sprlab/microfront/vue/shell` and `@sprlab/microfront/vue/remote`, containing RemoteApp component, useRemote composable, sprRemote plugin, and sprRemoteLegacy initializer.
+- **React_Module**: The React-specific adapter exported as `@sprlab/microfront/react/remote`, containing `initReactRemote` and `createReactRouterAdapter`.
+- **Angular_Module**: The Angular-specific adapter exported as `@sprlab/microfront/angular/remote`, containing `initAngularRemote` and `createAngularRouterAdapter`.
+- **Shell**: The host application (Vue 3) that embeds remote micro frontends via iframes.
+- **Remote**: A child application embedded inside an iframe within the Shell. Can be Vue 3, Vue 2/Nuxt 2, React, or Angular.
 - **Penpal_Connection**: A bidirectional RPC channel between Shell and Remote established via the penpal library over postMessage.
 - **Build_System**: The Vite-based build pipeline that produces distributable ES module bundles and TypeScript declarations for the library.
-- **Example_Apps**: The set of demonstration applications (shell, remote1, remote2, remote3) used to validate library functionality.
-- **Package_Exports**: The `exports` field in package.json that maps subpath imports (e.g., `@sprlab/microfront/core`) to their corresponding bundle files and type declarations.
+- **Example_Apps**: The set of demonstration applications organized by framework (Vue 3, Nuxt 2, React, Angular) used to validate library functionality.
+- **Package_Exports**: The `exports` field in package.json that maps subpath imports to their corresponding bundle files and type declarations.
+- **RouterAdapter**: A framework-neutral interface for route synchronization, implemented by each framework adapter.
 
 ## Requirements
 
-### Requirement 1: Extract Framework-Agnostic Core Module
+### Requirement 1: Framework-Agnostic Core Module
 
-**User Story:** As a library maintainer, I want all framework-agnostic logic extracted into a standalone Core_Module, so that it can be reused by wrappers for any UI framework.
-
-#### Acceptance Criteria
-
-1. THE Core_Module SHALL export a function that establishes a Penpal_Connection given an iframe element reference, allowed origins, a timeout value, and a set of method handlers.
-2. THE Core_Module SHALL export a function that observes content height changes on `document.documentElement` using ResizeObserver and invokes a provided callback with the current `scrollHeight`.
-3. THE Core_Module SHALL export a function that patches `window.history.pushState` to call `replaceState` instead, preventing duplicate history entries inside iframes.
-4. THE Core_Module SHALL export a function that returns whether the current window is inside an iframe by comparing `window.self` to `window.parent`.
-5. THE Core_Module SHALL export a function that initializes the remote side of a Penpal_Connection given allowed origins, a set of method handlers, and an optional router adapter, returning a connection promise.
-6. THE Core_Module SHALL export a messaging API consisting of a `send` function and an `onMessage` registration function that operate independently of any UI framework.
-7. THE Core_Module SHALL export type definitions for all public interfaces, including connection options, message envelopes, message handlers, remote state, and connection status enums.
-8. THE Core_Module SHALL have zero dependencies on Vue, React, Angular, or any other UI framework.
-
-### Requirement 2: Create Vue-Specific Wrapper Module
-
-**User Story:** As a Vue developer, I want a Vue_Module that wraps the Core_Module with Vue-specific APIs, so that I can use the library with familiar Vue patterns (components, composables, plugins).
+**User Story:** As a library maintainer, I want all framework-agnostic logic in a standalone Core_Module, so that it can be reused by wrappers for any UI framework.
 
 #### Acceptance Criteria
 
-1. THE Vue_Module SHALL export a `RemoteApp` Vue component that accepts `src`, `title`, `basePath`, `timeout`, `allowedOrigins`, and `fullHeight` props and renders an iframe managed by the Core_Module.
-2. THE Vue_Module SHALL export a `useRemote` composable that creates or reuses a messenger instance via Vue's `provide`/`inject` and returns reactive connection status, `sendMessage`, `onMessage`, and `onRouteChange` functions.
-3. THE Vue_Module SHALL export a `sprRemote` Vue 3 plugin that accepts `appName`, `router`, and `allowedOrigins` options and delegates initialization to the Core_Module.
-4. THE Vue_Module SHALL export a `sprRemoteLegacy` initializer that accepts the same options as `sprRemote` and supports Vue 2 and Nuxt 2 applications.
-5. THE Vue_Module SHALL list `vue` as a peer dependency and `vue-router` as an optional peer dependency.
-6. THE Vue_Module SHALL delegate all connection management, resizing, messaging, and history patching logic to the Core_Module rather than implementing them directly.
+1. THE Core_Module SHALL export `connectToRemote()` for shell-side penpal connections.
+2. THE Core_Module SHALL export `observeContentHeight()` using ResizeObserver to track document height changes.
+3. THE Core_Module SHALL export `patchHistoryPushState()` to prevent duplicate history entries in iframes.
+4. THE Core_Module SHALL export `isInsideIframe()` to detect iframe context.
+5. THE Core_Module SHALL export `initRemote()` for remote-side initialization with optional RouterAdapter.
+6. THE Core_Module SHALL export `createMessenger()` for standalone messaging state management.
+7. THE Core_Module SHALL export type definitions for all public interfaces including `RouterAdapter`, `RemoteConnection`, `ConnectionStatus`, etc.
+8. THE Core_Module SHALL have zero dependencies on Vue, React, or any UI framework.
+9. THE Core_Module SHALL use `penpal` as its only external dependency (no `@open-iframe-resizer/core`).
 
-### Requirement 3: Configure Package Exports for Subpath Access
+### Requirement 2: Vue-Specific Wrapper Module
 
-**User Story:** As a consumer of the library, I want to import from `@sprlab/microfront/core` and `@sprlab/microfront/vue`, so that I only pull in the code relevant to my framework.
-
-#### Acceptance Criteria
-
-1. WHEN a consumer imports from `@sprlab/microfront/core`, THE Build_System SHALL resolve to the Core_Module ES bundle and its corresponding TypeScript declaration file.
-2. WHEN a consumer imports from `@sprlab/microfront/vue`, THE Build_System SHALL resolve to the Vue_Module ES bundle and its corresponding TypeScript declaration file.
-3. THE Package_Exports SHALL maintain backward-compatible subpath entries for `@sprlab/microfront/shell` and `@sprlab/microfront/remote` that re-export from the Vue_Module.
-4. THE Build_System SHALL produce separate ES module bundles for the Core_Module and the Vue_Module, with the Vue_Module bundle excluding Core_Module code via external reference.
-5. THE Build_System SHALL generate TypeScript declaration files for both the Core_Module and the Vue_Module.
-
-### Requirement 4: Reorganize Example Applications
-
-**User Story:** As a developer working on the project, I want example applications organized under `examples/vue/`, so that the project root is clean and ready for future framework examples.
+**User Story:** As a Vue developer, I want Vue-specific APIs that wrap the Core_Module, so I can use familiar patterns (components, composables, plugins).
 
 #### Acceptance Criteria
 
-1. WHEN the restructure is complete, THE Example_Apps (shell, remote1, remote2, remote3) SHALL reside under the `examples/vue/` directory within the repository.
-2. WHEN a developer runs `yarn dev` from the root, THE Build_System SHALL start all Example_Apps concurrently, using the same ports as before (shell:4000, remote1:4001, remote2:4002, remote3:3000).
-3. WHEN the Example_Apps are moved, THE Example_Apps SHALL reference the library via a relative `file:` dependency path that resolves correctly from `examples/vue/<app>/` to `libs/spr-microfront/`.
-4. WHEN the Example_Apps are moved, THE Example_Apps SHALL update their imports from `@sprlab/microfront/shell` and `@sprlab/microfront/remote` to continue working without code changes beyond the dependency path.
+1. THE Vue_Module SHALL export a `RemoteApp` component with props: `src`, `title`, `basePath`, `timeout`, `allowedOrigins`, and `fullHeight`.
+2. THE `fullHeight` prop SHALL make the iframe take at least 100% of its container height, expanding for tall content and shrinking back on navigation.
+3. THE Vue_Module SHALL export a `useRemote` composable with reactive connection status and messaging functions.
+4. THE Vue_Module SHALL export `sprRemote` (Vue 3 plugin) and `sprRemoteLegacy` (Vue 2/Nuxt 2 initializer).
+5. THE Vue_Module SHALL be importable from `@sprlab/microfront/vue/shell` and `@sprlab/microfront/vue/remote`.
+6. THE old paths `@sprlab/microfront/shell` and `@sprlab/microfront/remote` SHALL remain as backward-compatible aliases.
 
-### Requirement 5: Preserve Build and Publish Pipeline
+### Requirement 3: React Adapter Module
 
-**User Story:** As a library maintainer, I want the library to remain publishable to npm after restructuring, so that existing consumers are not disrupted.
-
-#### Acceptance Criteria
-
-1. THE Build_System SHALL produce a `dist/` directory containing ES module bundles for `core`, `vue` (and backward-compatible `shell`, `remote` aliases) when `yarn build` is run inside `libs/spr-microfront/`.
-2. THE Build_System SHALL produce TypeScript declaration files in `dist/` for all exported modules.
-3. THE package.json `files` field SHALL include only the `dist/` directory for npm publishing.
-4. THE package.json `exports` field SHALL map all subpath entries (`./core`, `./vue`, `./shell`, `./remote`) to their respective bundle and type declaration files.
-5. IF the `yarn build` command fails, THEN THE Build_System SHALL exit with a non-zero status code and output a descriptive error message.
-
-### Requirement 6: Preserve Existing Test Suite
-
-**User Story:** As a library maintainer, I want all existing unit tests and e2e tests to pass after restructuring, so that I have confidence no functionality was broken.
+**User Story:** As a React developer, I want a React-specific adapter so I can use the library without Vue dependencies.
 
 #### Acceptance Criteria
 
-1. WHEN `yarn test` is run inside `libs/spr-microfront/`, THE Build_System SHALL execute all unit tests and report results.
-2. THE unit tests for `useRemote` SHALL validate that the composable returns reactive status, message handlers, and route change handlers using the Vue_Module wrapping the Core_Module.
-3. THE unit tests for `sprRemote` SHALL validate that the plugin initializes correctly when not inside an iframe, that `send` warns before connection, and that `onMessage` accepts handlers.
-4. WHEN all Example_Apps are running, THE e2e tests SHALL validate iframe loading, resizing, messaging, route synchronization, history patching, and back/forward navigation for all remotes.
+1. THE React_Module SHALL export `initReactRemote()` that accepts `appName`, `router` (React Router instance), and `allowedOrigins`.
+2. THE React_Module SHALL export `createReactRouterAdapter()` that creates a `RouterAdapter` from a React Router `createBrowserRouter` instance.
+3. THE React_Module SHALL be importable from `@sprlab/microfront/react/remote`.
+4. THE React_Module SHALL return a `RemoteConnection` (or null if not in iframe) with `send()` and `onMessage()`.
+5. THE React_Module SHALL work with React Router v6+ and v7.
 
-### Requirement 7: Preserve Git and NPM Configuration Integrity
+### Requirement 4: Angular Adapter Module
 
-**User Story:** As a developer, I want all git repositories and npm configurations preserved during restructuring, so that version history and dependency management remain intact.
-
-#### Acceptance Criteria
-
-1. WHEN files are moved during restructuring, THE restructure process SHALL preserve the `.git` directory in the repository root and the `.git` file (submodule reference) in `libs/spr-microfront/`.
-2. WHEN files are moved during restructuring, THE restructure process SHALL preserve all `.gitignore`, `.gitmodules`, `.yarnrc.yml`, and `yarn.lock` files in their correct locations.
-3. WHEN files are moved during restructuring, THE restructure process SHALL preserve all `.npmrc` and package.json files with correct relative paths updated as needed.
-4. IF a file move would overwrite an existing `.git` directory or file, THEN THE restructure process SHALL abort that operation and report the conflict.
-
-### Requirement 8: Router Adapter Abstraction in Core
-
-**User Story:** As a library maintainer, I want the Core_Module to accept a framework-neutral router adapter interface, so that route synchronization works with any framework's router.
+**User Story:** As an Angular developer, I want an Angular-specific adapter so I can use the library with Angular Router.
 
 #### Acceptance Criteria
 
-1. THE Core_Module SHALL define a `RouterAdapter` interface with methods for reading the current path, replacing the current route, and registering an after-navigation callback.
-2. WHEN a `RouterAdapter` is provided to the remote initialization function, THE Core_Module SHALL use the adapter to synchronize routes between Shell and Remote.
-3. WHEN no `RouterAdapter` is provided, THE Core_Module SHALL skip all route synchronization logic without errors.
-4. THE Vue_Module SHALL provide a factory function that creates a `RouterAdapter` from a Vue Router instance (compatible with Vue Router v3, v4, and v5).
+1. THE Angular_Module SHALL export `initAngularRemote()` that accepts `appName`, `router` (Angular Router instance), and `allowedOrigins`.
+2. THE Angular_Module SHALL export `createAngularRouterAdapter()` that creates a `RouterAdapter` from an Angular Router instance.
+3. THE Angular_Module SHALL be importable from `@sprlab/microfront/angular/remote`.
+4. THE Angular_Module SHALL return a `RemoteConnection` (or null if not in iframe) with `send()` and `onMessage()`.
+5. THE Angular_Module SHALL detect `NavigationEnd` events for route synchronization.
+
+### Requirement 5: Package Exports Configuration
+
+**User Story:** As a consumer, I want to import only the code relevant to my framework via subpath imports.
+
+#### Acceptance Criteria
+
+1. THE Package_Exports SHALL include: `./core`, `./vue`, `./vue/shell`, `./vue/remote`, `./shell` (alias), `./remote` (alias), `./react/remote`, `./angular/remote`.
+2. Each export SHALL have `types` and `default` fields.
+3. `vue` and `vue-router` SHALL be optional peer dependencies.
+4. THE Build_System SHALL produce separate ES module bundles for core, vue, shell, remote, react-remote, and angular-remote.
+
+### Requirement 5: Project Structure
+
+**User Story:** As a developer, I want a clean project structure with the library in `lib/` and examples organized by framework.
+
+#### Acceptance Criteria
+
+1. THE library source SHALL reside in `lib/src/` with `lib/package.json` for npm publishing.
+2. Vue 3 examples SHALL reside in `examples/vue/` (shell, remote-vue-connection, remote-vue-route, remote-vue-fullHeight).
+3. Nuxt 2 examples SHALL reside in `examples/vue/` (remote-vue2-connection, remote-vue2-route, remote-vue2-fullHeight).
+4. React examples SHALL reside in `examples/react/` (remote-react-connection, remote-react-route, remote-react-fullHeight).
+5. Angular examples SHALL reside in `examples/angular/` (remote-angular-connection, remote-angular-route, remote-angular-fullHeight).
+6. Vue 3 and React examples SHALL use `link:../../../lib` for local development.
+7. Nuxt 2 examples SHALL use `file:../../../lib` for local development (copies only `dist/` via `"files"` field).
+8. Angular examples SHALL use `link:../../../lib` for local development.
+9. THE root `package.json` SHALL provide `yarn use:local` and `yarn use:npm` scripts to switch between local and npm dependencies.
+10. THE root `package.json` SHALL provide `yarn kill-ports` and `yarn dev` / `yarn dev:vue2` / `yarn dev:react` / `yarn dev:angular` / `yarn dev:all` scripts.
+
+### Requirement 6: FullHeight Iframe Behavior
+
+**User Story:** As a shell developer, I want an iframe that fills its container by default and expands for tall content.
+
+#### Acceptance Criteria
+
+1. WHEN `fullHeight` is true, THE iframe SHALL have `min-height: 100%` to fill its container.
+2. WHEN the remote content is taller than the container, THE iframe SHALL expand to fit the content.
+3. WHEN navigating from tall to small content, THE iframe SHALL shrink back to container height.
+4. THE height measurement SHALL use penpal communication (`onShellContainerHeight`) with double `requestAnimationFrame` for accurate layout measurement.
+5. WHEN `fullHeight` is active, automatic `onRemoteHeight` reports SHALL be ignored (height managed via `requestRemoteHeight()`).
+
+### Requirement 7: Router Adapter Abstraction
+
+**User Story:** As a library maintainer, I want a framework-neutral router interface so route sync works with any framework.
+
+#### Acceptance Criteria
+
+1. THE `RouterAdapter` interface SHALL define `getCurrentPath()`, `replace(path)`, and `afterEach(callback)`.
+2. THE Vue_Module SHALL provide `createVueRouterAdapter()` compatible with Vue Router v3, v4, and v5.
+3. THE React_Module SHALL provide `createReactRouterAdapter()` compatible with React Router v6+ and v7.
+4. THE Angular_Module SHALL provide `createAngularRouterAdapter()` compatible with Angular Router v15+.
+5. WHEN no router is provided, route synchronization SHALL be skipped without errors.
+
+### Requirement 8: Nuxt 2 Compatibility
+
+**User Story:** As a Nuxt 2 developer, I want to use the library with webpack 4 and Vue 2.
+
+#### Acceptance Criteria
+
+1. Nuxt 2 remotes SHALL use `sprRemoteLegacy` from `@sprlab/microfront/dist/remote.js`.
+2. Nuxt 2 `nuxt.config.js` SHALL transpile `@sprlab/microfront` and `penpal`.
+3. Nuxt 2 `nuxt.config.js` SHALL include a webpack alias for `penpal` pointing to `node_modules/penpal/dist/penpal.mjs` (webpack 4 doesn't support `exports` field).
+4. Nuxt 2 examples SHALL use `mode: 'spa'` to avoid SSR issues with client-only plugins.
