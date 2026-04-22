@@ -2471,8 +2471,8 @@ __metadata:
   linkType: hard
 
 "@sprlab/microfront@file:../../../lib::locator=remote-vue2-fullheight%40workspace%3A.":
-  version: 0.3.0
-  resolution: "@sprlab/microfront@file:../../../lib#../../../lib::hash=27ea6e&locator=remote-vue2-fullheight%40workspace%3A."
+  version: 0.4.1
+  resolution: "@sprlab/microfront@file:../../../lib#../../../lib::hash=3a505a&locator=remote-vue2-fullheight%40workspace%3A."
   dependencies:
     penpal: "npm:^7.0.6"
   peerDependencies:
@@ -2483,7 +2483,7 @@ __metadata:
       optional: true
     vue-router:
       optional: true
-  checksum: 10c0/99da60f1943d00faa5b72bdeeac1b0f26ee516a8df4b1f5c608a79ee586521b0af7bf1b2fbe179edbd1d769d6d3664eb58b2f409acd041e7eefaba6ce42876b5
+  checksum: 10c0/3ec544771f9f55bae0f227b876be314c3edbd4adc5293a2c7a6e979e3c8ab47c415458fb5d80ffe5847ff6583183d60f50da8da727f5aec52db491721159233e
   languageName: node
   linkType: hard
 

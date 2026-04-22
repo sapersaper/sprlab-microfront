@@ -85,7 +85,14 @@ Full implementation status of `@sprlab/microfront` — framework-agnostic core w
   - [x] 13.6 Shell reconnects penpal on iframe load (MPA support in RemoteApp.vue)
   - [x] 13.7 `initRemote()` sends `window.location.pathname` on connect (even without router)
   - [x] 13.8 MPA back navigation uses `replace()` to avoid double-back
-  - [ ] 13.9 TODO: MPA forward navigation doesn't work (replace removes forward history)
+  - [ ] 13.9 Known limitation: MPA forward navigation after leaving the remote doesn't work (component remounts with default page)
+
+- [x] 14. Back/Forward navigation fix
+  - [x] 14.1 connectionTime grace period (500ms) — use replace for initial sync to avoid duplicate history entries
+  - [x] 14.2 popstate detection — skip push/replace during back/forward to preserve history stack
+  - [x] 14.3 Fixed for Vue 3, Nuxt 2, React, Angular
+  - [x] 14.4 MPA back works correctly
+  - [ ] 14.5 MPA forward after leaving remote — known limitation
 
 - [x] 14. Developer tooling
   - [x] 14.1 `scripts/use-lib.js` — switch between `link:/file:` (local) and npm
@@ -99,6 +106,7 @@ Full implementation status of `@sprlab/microfront` — framework-agnostic core w
   - [x] 15.3 v0.2.0 — React support, new import paths (vue/shell, vue/remote, react/remote)
   - [x] 15.4 v0.3.0 — Angular support (angular/remote)
   - [x] 15.5 v0.4.0 — MPA support (iframe load reconnection, route sync without router)
+  - [x] 15.6 v0.4.1 — Fixed back/forward for all SPA frameworks (connectionTime grace period), MPA back works, MPA forward is known limitation
 
 - [ ]* 16. Optional: Property-based tests
   - [ ]* 16.1 History patch prevents history growth
@@ -115,4 +123,4 @@ Full implementation status of `@sprlab/microfront` — framework-agnostic core w
 - Nuxt 2 uses `file:` (copies dist only), Vue 3, React, and Angular use `link:` (symlink)
 - MPA examples use plain HTML served by a Node HTTP server, no npm dependencies
 - `penpal` is the only runtime dependency
-- Known limitation: MPA forward navigation doesn't work (TODO)
+- Known limitation: MPA forward navigation after leaving the remote doesn't work (component remounts)

@@ -212,7 +212,7 @@ Features:
 - Height reporting works (ResizeObserver)
 - Route sync works — shell URL updates after each page load
 - Back navigation works (single click)
-- Known limitation: forward navigation doesn't work (TODO)
+- Known limitation: forward navigation doesn't work after leaving the MPA remote (e.g., back to Home then forward)
 
 The shell automatically reconnects penpal after each iframe reload.
 

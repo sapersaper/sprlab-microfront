@@ -15,7 +15,9 @@
         "browser_console_messages",
         "browser_wait_for",
         "browser_navigate_back",
-        "browser_evaluate"
+        "browser_evaluate",
+        "browser_run_code",
+        "browser_run_code"
       ]
     }
   }

@@ -52,6 +52,17 @@ const iframeStyle = computed(() => {
 let ignoreNextRouteChange = false
 let isFirstRouteSync = true
 let isMpaReload = false
+let connectionTime = 0
+let isPopstateNavigation = false
+
+// Track back/forward navigation via popstate
+if (typeof window !== 'undefined') {
+  window.addEventListener('popstate', () => {
+    isPopstateNavigation = true
+    // Reset after a tick — the route change handlers will read this synchronously
+    setTimeout(() => { isPopstateNavigation = false }, 0)
+  })
+}
 
 const isVisible = computed(() => {
   if (!messenger) return true
@@ -125,6 +136,8 @@ onMounted(async () => {
 
   function createConnection() {
     if (penpalConnection) penpalConnection.destroy()
+    connectionTime = Date.now()
+    isFirstRouteSync = true
 
     penpalConnection = connectToRemote({
       iframe: iframe!,
@@ -139,13 +152,20 @@ onMounted(async () => {
             const shellPath = props.basePath + path
             if (route.fullPath !== shellPath) {
               ignoreNextRouteChange = true
-              if (isFirstRouteSync || isMpaReload) {
+              // Use replace during initial sync period (first 500ms after connection)
+              // and for MPA reloads to avoid duplicate history entries.
+              // But NOT during popstate (back/forward) — that would destroy forward history.
+              const isInitialPeriod = Date.now() - connectionTime < 500
+              if ((isFirstRouteSync || isMpaReload || isInitialPeriod) && !isPopstateNavigation) {
                 isFirstRouteSync = false
                 isMpaReload = false
                 router.replace(shellPath)
-              } else {
+              } else if (!isPopstateNavigation) {
                 router.push(shellPath)
               }
+              // During popstate: don't push or replace — browser already moved the history pointer
+            } else {
+              isFirstRouteSync = false
             }
           }
           if (messenger) messenger.handleRouteChange(path as string)
@@ -174,6 +194,11 @@ onMounted(async () => {
   // Initial connection
   createConnection()
 
+  // If mounting during a popstate (back/forward), don't use replace for initial sync
+  if (isPopstateNavigation) {
+    isFirstRouteSync = false
+  }
+
   // Reconnect on iframe load (for MPA remotes that do full page reloads)
   let isInitialLoad = true
   iframe.addEventListener('load', () => {
@@ -182,9 +207,11 @@ onMounted(async () => {
       return
     }
     // Iframe reloaded (MPA navigation) — reconnect penpal
-    // TODO: MPA forward navigation doesn't work because we use replace() instead of push()
-    // to avoid double-back. Need a strategy to handle both back and forward with MPA iframes.
+    // Known limitation: MPA forward navigation after leaving the remote (e.g., back to Home then forward)
+    // doesn't work because the component remounts and the iframe loads the default page instead of
+    // the correct forward page. Back navigation works correctly for all frameworks.
     isMpaReload = true
+    ignoreNextRouteChange = false
     createConnection()
   })
 
@@ -210,10 +237,32 @@ if (props.basePath) {
       }
       if (!penpalConnection) return
       const targetPath = newPath || '/'
+      const iframe = iframeRef.value
+      if (!iframe) return
+
+      // Try SPA navigation via penpal with a short timeout
+      let navigated = false
       try {
-        const remote = await penpalConnection.promise as Record<string, (p: string) => Promise<void>>
-        await remote.onShellNavigate(targetPath)
+        const remote = await Promise.race([
+          penpalConnection.promise,
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 300)),
+        ]) as Record<string, (p: string) => Promise<void>>
+        if (typeof remote.onShellNavigate === 'function') {
+          await Promise.race([
+            remote.onShellNavigate(targetPath),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 300)),
+          ])
+          navigated = true
+        }
       } catch {}
+
+      // Fallback for MPA: change iframe src directly
+      if (!navigated) {
+        const newSrc = props.src + targetPath
+        if (!iframe.src.endsWith(targetPath)) {
+          iframe.src = newSrc
+        }
+      }
     },
   )
 }
