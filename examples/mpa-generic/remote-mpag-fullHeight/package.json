@@ -1,0 +1,8 @@
+{
+  "name": "remote-mpag-fullheight",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../shared/server.js 4032 pages"
+  }
+}

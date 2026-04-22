@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPA FullHeight - Scroll Internal</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: system-ui; }
+    .app-layout { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+    header { padding: 16px; }
+    .wrapper { height: 100%; overflow: auto; padding: 16px; }
+  </style>
+  <script type="importmap">
+    { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
+  </script>
+</head>
+<body>
+  <div class="app-layout">
+    <header>
+      <h1>MPA FullHeight Example</h1>
+      <nav>
+        <a href="/small">Small</a> |
+        <a href="/scroll">Scroll Internal</a> |
+        <a href="/tall">Tall Content</a>
+      </nav>
+    </header>
+    <div class="wrapper">
+      <h2>Scroll Internal</h2>
+      <p>This page fills the available height and scrolls internally.</p>
+      <p>Scrollable item 1 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 2 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 3 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 4 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 5 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 6 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 7 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 8 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 9 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 10 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 11 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 12 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 13 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 14 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 15 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 16 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 17 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 18 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 19 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 20 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 21 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 22 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 23 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 24 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 25 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 26 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 27 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 28 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 29 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      <p>Scrollable item 30 — Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initRemote } from '/dist/core.js'
+    initRemote({ appName: 'remote-mpag-fullHeight' })
+  </script>
+</body>
+</html>

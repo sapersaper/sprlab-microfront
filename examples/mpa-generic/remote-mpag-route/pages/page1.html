@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPA Route - Page 1</title>
+  <style>body { margin: 0; padding: 16px; font-family: system-ui; }</style>
+  <script type="importmap">
+    { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
+  </script>
+</head>
+<body>
+  <h1>MPA Route Example</h1>
+  <nav>
+    <a href="/page1">Page 1</a> | <a href="/page2">Page 2</a>
+  </nav>
+  <h2>Page 1</h2>
+  <p>This is page 1 of the MPA Route Example.</p>
+  <p>Each link does a full page reload — the iframe reloads completely.</p>
+
+  <script type="module">
+    import { initRemote } from '/dist/core.js'
+    initRemote({ appName: 'remote-mpag-route' })
+  </script>
+</body>
+</html>

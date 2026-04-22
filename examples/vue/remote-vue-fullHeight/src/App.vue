@@ -14,7 +14,6 @@
 
 <style scoped>
 .app-layout {
-  /* padding: 8px; */
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100vh;

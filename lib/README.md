@@ -193,6 +193,29 @@ connection?.send({ greeting: 'hello' });
 connection?.onMessage((payload) => console.log(payload));
 ```
 
+### Remote — MPA (Multi-Page Apps / SSR)
+
+For server-rendered apps (PHP, ASP, static HTML, etc.) that do full page reloads, include a `<script>` tag on each page:
+
+```html
+<script type="importmap">
+  { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
+</script>
+<script type="module">
+  import { initRemote } from '/path/to/dist/core.js'
+  initRemote({ appName: 'my-mpa-app' })
+</script>
+```
+
+Features:
+- Messaging works on each page while connected
+- Height reporting works (ResizeObserver)
+- Route sync works — shell URL updates after each page load
+- Back navigation works (single click)
+- Known limitation: forward navigation doesn't work (TODO)
+
+The shell automatically reconnects penpal after each iframe reload.
+
 ### Remote — Vue 2 / Nuxt 2
 
 ```js

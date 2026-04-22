@@ -2,7 +2,7 @@
 
 ## Overview
 
-Full implementation status of `@sprlab/microfront` — framework-agnostic core with Vue 3, Vue 2/Nuxt 2, React, and Angular support.
+Full implementation status of `@sprlab/microfront` — framework-agnostic core with Vue 3, Vue 2/Nuxt 2, React, Angular, and MPA (generic) support.
 
 ## Tasks
 
@@ -76,29 +76,43 @@ Full implementation status of `@sprlab/microfront` — framework-agnostic core w
   - [x] 12.3 `examples/angular/remote-angular-fullHeight/` — fullHeight (port 4022)
   - [x] 12.4 Angular-specific: `ViewEncapsulation.None` for fullHeight, `router-outlet { display: none }` for grid layout
 
-- [x] 13. Developer tooling
-  - [x] 13.1 `scripts/use-lib.js` — switch between `link:/file:` (local) and npm
-  - [x] 13.2 `scripts/kill-ports.sh` — kill dev server ports before starting
-  - [x] 13.3 Root scripts: `yarn dev`, `yarn dev:vue2`, `yarn dev:react`, `yarn dev:angular`, `yarn dev:all`
-  - [x] 13.4 `yarn use:local` / `yarn use:npm` / `yarn install:all`
+- [x] 13. MPA Generic examples
+  - [x] 13.1 `examples/mpa-generic/shared/server.js` — shared HTTP server
+  - [x] 13.2 `examples/mpa-generic/remote-mpag-connection/` — messaging (port 4030)
+  - [x] 13.3 `examples/mpa-generic/remote-mpag-route/` — route sync with full page reloads (port 4031)
+  - [x] 13.4 `examples/mpa-generic/remote-mpag-fullHeight/` — fullHeight (port 4032)
+  - [x] 13.5 Import maps for penpal resolution in browser
+  - [x] 13.6 Shell reconnects penpal on iframe load (MPA support in RemoteApp.vue)
+  - [x] 13.7 `initRemote()` sends `window.location.pathname` on connect (even without router)
+  - [x] 13.8 MPA back navigation uses `replace()` to avoid double-back
+  - [ ] 13.9 TODO: MPA forward navigation doesn't work (replace removes forward history)
 
-- [x] 14. Published versions
-  - [x] 14.1 v0.1.2 — initial restructure (core/vue separation)
-  - [x] 14.2 v0.1.3 — removed @open-iframe-resizer/core, added fullHeight
-  - [x] 14.3 v0.2.0 — React support, new import paths (vue/shell, vue/remote, react/remote)
-  - [x] 14.4 v0.3.0 — Angular support (angular/remote)
+- [x] 14. Developer tooling
+  - [x] 14.1 `scripts/use-lib.js` — switch between `link:/file:` (local) and npm
+  - [x] 14.2 `scripts/kill-ports.sh` — kill dev server ports before starting
+  - [x] 14.3 Root scripts: `yarn dev`, `yarn dev:vue2`, `yarn dev:react`, `yarn dev:angular`, `yarn dev:mpag`, `yarn dev:all`
+  - [x] 14.4 `yarn use:local` / `yarn use:npm` / `yarn install:all`
 
-- [ ]* 15. Optional: Property-based tests
-  - [ ]* 15.1 History patch prevents history growth
-  - [ ]* 15.2 Message broadcast to all handlers
-  - [ ]* 15.3 Backward-compatible re-exports equivalence
-  - [ ]* 15.4 RouterAdapter route synchronization
-  - [ ]* 15.5 React RouterAdapter delegation
-  - [ ]* 15.6 Angular RouterAdapter delegation
+- [x] 15. Published versions
+  - [x] 15.1 v0.1.2 — initial restructure (core/vue separation)
+  - [x] 15.2 v0.1.3 — removed @open-iframe-resizer/core, added fullHeight
+  - [x] 15.3 v0.2.0 — React support, new import paths (vue/shell, vue/remote, react/remote)
+  - [x] 15.4 v0.3.0 — Angular support (angular/remote)
+  - [x] 15.5 v0.4.0 — MPA support (iframe load reconnection, route sync without router)
+
+- [ ]* 16. Optional: Property-based tests
+  - [ ]* 16.1 History patch prevents history growth
+  - [ ]* 16.2 Message broadcast to all handlers
+  - [ ]* 16.3 Backward-compatible re-exports equivalence
+  - [ ]* 16.4 RouterAdapter route synchronization
+  - [ ]* 16.5 React RouterAdapter delegation
+  - [ ]* 16.6 Angular RouterAdapter delegation
 
 ## Notes
 
 - Tasks marked with `*` are optional
-- All Vue 3, Nuxt 2, React, and Angular examples tested end-to-end via Playwright
+- All Vue 3, Nuxt 2, React, Angular, and MPA examples tested end-to-end via Playwright
 - Nuxt 2 uses `file:` (copies dist only), Vue 3, React, and Angular use `link:` (symlink)
+- MPA examples use plain HTML served by a Node HTTP server, no npm dependencies
 - `penpal` is the only runtime dependency
+- Known limitation: MPA forward navigation doesn't work (TODO)

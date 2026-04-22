@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPA FullHeight - Small</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: system-ui; }
+    .app-layout { display: grid; grid-template-rows: auto 1fr; height: 100vh; }
+    header { padding: 16px; }
+    .content { padding: 16px; }
+  </style>
+  <script type="importmap">
+    { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
+  </script>
+</head>
+<body>
+  <div class="app-layout">
+    <header>
+      <h1>MPA FullHeight Example</h1>
+      <nav>
+        <a href="/small">Small</a> |
+        <a href="/scroll">Scroll Internal</a> |
+        <a href="/tall">Tall Content</a>
+      </nav>
+    </header>
+    <div class="content">
+      <h2>Small Content</h2>
+      <p>This page has very little content — less than 200px tall.</p>
+      <p>The iframe should still fill the available container height.</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initRemote } from '/dist/core.js'
+    initRemote({ appName: 'remote-mpag-fullHeight' })
+  </script>
+</body>
+</html>

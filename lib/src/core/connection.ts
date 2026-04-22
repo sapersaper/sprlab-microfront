@@ -89,16 +89,16 @@ export function initRemote(options: RemoteInitOptions): RemoteConnection | null 
     })
   }).catch(() => {})
 
-  // Once penpal connects, send the current route to the shell
-  if (router) {
-    connectionPromise.then((remote: any) => {
-      const currentPath = router.getCurrentPath()
-      if (currentPath) {
-        remote.onRemoteRouteChange(currentPath)
-      }
-    }).catch(() => {})
+  // Once penpal connects, send the current route to the shell (works for both SPA and MPA)
+  connectionPromise.then((remote: any) => {
+    const currentPath = router ? router.getCurrentPath() : window.location.pathname
+    if (currentPath) {
+      remote.onRemoteRouteChange(currentPath)
+    }
+  }).catch(() => {})
 
-    // Register afterEach to sync route changes to shell
+  // Register afterEach to sync SPA route changes to shell
+  if (router) {
     router.afterEach((path: string) => {
       connectionPromise.then((remote: any) => {
         remote.onRemoteRouteChange(path)

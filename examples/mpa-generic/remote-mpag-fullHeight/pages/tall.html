@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPA FullHeight - Tall Content</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: system-ui; }
+    header { padding: 16px; }
+    .content { padding: 16px; }
+    .block { padding: 16px; margin: 8px 0; background: #f0f0f0; border-radius: 4px; }
+  </style>
+  <script type="importmap">
+    { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
+  </script>
+</head>
+<body>
+  <header>
+    <h1>MPA FullHeight Example</h1>
+    <nav>
+      <a href="/small">Small</a> |
+      <a href="/scroll">Scroll Internal</a> |
+      <a href="/tall">Tall Content</a>
+    </nav>
+  </header>
+  <div class="content">
+    <h2>Tall Content</h2>
+    <p>This page has content that exceeds 1000px without internal scroll.</p>
+    <p>The iframe should expand to fit all the content.</p>
+    <div class="block"><strong>Block 1</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 2</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 3</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 4</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 5</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 6</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 7</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 8</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 9</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 10</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 11</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 12</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 13</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 14</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 15</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 16</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 17</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 18</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 19</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 20</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 21</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 22</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 23</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 24</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+    <div class="block"><strong>Block 25</strong> — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
+  </div>
+
+  <script type="module">
+    import { initRemote } from '/dist/core.js'
+    initRemote({ appName: 'remote-mpag-fullHeight' })
+  </script>
+</body>
+</html>

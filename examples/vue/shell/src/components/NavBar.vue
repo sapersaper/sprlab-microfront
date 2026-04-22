@@ -13,6 +13,7 @@
             <li><router-link to="/vue2-connection">Nuxt 2</router-link></li>
             <li><router-link to="/react-connection">React</router-link></li>
             <li><router-link to="/angular-connection">Angular</router-link></li>
+            <li><router-link to="/mpag-connection">MPA Generic</router-link></li>
           </ul>
         </details>
       </li>
@@ -24,6 +25,7 @@
             <li><router-link to="/vue2-route">Nuxt 2</router-link></li>
             <li><router-link to="/react-route">React</router-link></li>
             <li><router-link to="/angular-route">Angular</router-link></li>
+            <li><router-link to="/mpag-route">MPA Generic</router-link></li>
           </ul>
         </details>
       </li>
@@ -35,6 +37,7 @@
             <li><router-link to="/vue2-fullheight">Nuxt 2</router-link></li>
             <li><router-link to="/react-fullheight">React</router-link></li>
             <li><router-link to="/angular-fullheight">Angular</router-link></li>
+            <li><router-link to="/mpag-fullheight">MPA Generic</router-link></li>
           </ul>
         </details>
       </li>

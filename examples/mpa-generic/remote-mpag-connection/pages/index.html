@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MPA Connection Example</title>
+  <style>body { margin: 0; padding: 16px; font-family: system-ui; }</style>
+  <script type="importmap">
+    { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
+  </script>
+</head>
+<body>
+  <h1>MPA Connection Example</h1>
+  <p>Shell counter: <span id="shell-counter">0</span></p>
+  <button id="send-btn">Send to Shell: <span id="local-counter">0</span></button>
+  <br><br>
+  <button id="lorem-btn">Show Lorem Ipsum</button>
+  <div id="lorem" style="display: none;">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+    <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.</p>
+  </div>
+
+  <script type="module">
+    import { initRemote } from '/dist/core.js'
+
+    const connection = initRemote({ appName: 'remote-mpag-connection' })
+
+    let localCounter = 0
+
+    if (connection) {
+      connection.onMessage((payload) => {
+        document.getElementById('shell-counter').textContent = payload.counter
+      })
+    }
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      localCounter++
+      document.getElementById('local-counter').textContent = localCounter
+      connection?.send({ counter: localCounter })
+    })
+
+    document.getElementById('lorem-btn').addEventListener('click', () => {
+      const lorem = document.getElementById('lorem')
+      const btn = document.getElementById('lorem-btn')
+      if (lorem.style.display === 'none') {
+        lorem.style.display = 'block'
+        btn.textContent = 'Hide Lorem Ipsum'
+      } else {
+        lorem.style.display = 'none'
+        btn.textContent = 'Show Lorem Ipsum'
+      }
+    })
+  </script>
+</body>
+</html>

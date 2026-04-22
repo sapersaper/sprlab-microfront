@@ -1,0 +1,8 @@
+{
+  "name": "remote-mpag-route",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ../shared/server.js 4031 pages"
+  }
+}

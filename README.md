@@ -32,6 +32,11 @@ For the library documentation, see [lib/README.md](lib/README.md).
 │       ├── remote-angular-connection/  (4020)
 │       ├── remote-angular-route/       (4021)
 │       └── remote-angular-fullHeight/  (4022)
+├── mpa-generic/
+│   ├── shared/server.js                — shared HTTP server
+│   ├── remote-mpag-connection/         (4030)
+│   ├── remote-mpag-route/              (4031)
+│   └── remote-mpag-fullHeight/         (4032)
 └── scripts/                      — Dev tooling
 ```
 
@@ -52,6 +57,9 @@ yarn dev:react
 
 # Run Angular examples
 yarn dev:angular
+
+# Run MPA Generic examples
+yarn dev:mpag
 
 # Run all examples
 yarn dev:all

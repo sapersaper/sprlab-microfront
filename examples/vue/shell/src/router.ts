@@ -12,6 +12,9 @@ import ReactFullHeight from '@/views/ReactFullHeight.vue'
 import AngularConnection from '@/views/AngularConnection.vue'
 import AngularRoute from '@/views/AngularRoute.vue'
 import AngularFullHeight from '@/views/AngularFullHeight.vue'
+import MpagConnection from '@/views/MpagConnection.vue'
+import MpagRoute from '@/views/MpagRoute.vue'
+import MpagFullHeight from '@/views/MpagFullHeight.vue'
 
 const routes = [
   { path: '/', component: Home },
@@ -27,6 +30,9 @@ const routes = [
   { path: '/angular-connection', component: AngularConnection },
   { path: '/angular-route/:path(.*)*', component: AngularRoute },
   { path: '/angular-fullheight/:path(.*)*', component: AngularFullHeight },
+  { path: '/mpag-connection', component: MpagConnection },
+  { path: '/mpag-route/:path(.*)*', component: MpagRoute },
+  { path: '/mpag-fullheight/:path(.*)*', component: MpagFullHeight },
 ]
 
 export default createRouter({

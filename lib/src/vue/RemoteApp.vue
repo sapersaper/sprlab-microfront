@@ -51,6 +51,7 @@ const iframeStyle = computed(() => {
 
 let ignoreNextRouteChange = false
 let isFirstRouteSync = true
+let isMpaReload = false
 
 const isVisible = computed(() => {
   if (!messenger) return true
@@ -122,45 +123,69 @@ onMounted(async () => {
     baseContainerHeight = iframe.parentElement.clientHeight
   }
 
-  penpalConnection = connectToRemote({
-    iframe,
-    allowedOrigins: props.allowedOrigins,
-    timeout: props.timeout,
-    methods: {
-      onRemoteMessage(payload: unknown) {
-        if (messenger) messenger.handleRemoteMessage(payload as any)
-      },
-      onRemoteRouteChange(path: unknown) {
-        if (props.basePath) {
-          const shellPath = props.basePath + path
-          if (route.fullPath !== shellPath) {
-            ignoreNextRouteChange = true
-            if (isFirstRouteSync) {
-              isFirstRouteSync = false
-              router.replace(shellPath)
-            } else {
-              router.push(shellPath)
+  function createConnection() {
+    if (penpalConnection) penpalConnection.destroy()
+
+    penpalConnection = connectToRemote({
+      iframe: iframe!,
+      allowedOrigins: props.allowedOrigins,
+      timeout: props.timeout,
+      methods: {
+        onRemoteMessage(payload: unknown) {
+          if (messenger) messenger.handleRemoteMessage(payload as any)
+        },
+        onRemoteRouteChange(path: unknown) {
+          if (props.basePath) {
+            const shellPath = props.basePath + path
+            if (route.fullPath !== shellPath) {
+              ignoreNextRouteChange = true
+              if (isFirstRouteSync || isMpaReload) {
+                isFirstRouteSync = false
+                isMpaReload = false
+                router.replace(shellPath)
+              } else {
+                router.push(shellPath)
+              }
             }
           }
-        }
-        if (messenger) messenger.handleRouteChange(path as string)
-        
-        // After route change, re-measure height
-        if (props.fullHeight) {
-          requestRemoteHeight()
-        }
+          if (messenger) messenger.handleRouteChange(path as string)
+          
+          // After route change, re-measure height
+          if (props.fullHeight) {
+            requestRemoteHeight()
+          }
+        },
+        onRemoteHeight(height: unknown) {
+          // When fullHeight is active, ignore automatic height reports
+          // Height is managed via requestRemoteHeight() on route changes
+          if (props.fullHeight) return
+          
+          const h = Number(height)
+          if (!isNaN(h) && h > 0) {
+            remoteHeight.value = h
+          }
+        },
       },
-      onRemoteHeight(height: unknown) {
-        // When fullHeight is active, ignore automatic height reports
-        // Height is managed via requestRemoteHeight() on route changes
-        if (props.fullHeight) return
-        
-        const h = Number(height)
-        if (!isNaN(h) && h > 0) {
-          remoteHeight.value = h
-        }
-      },
-    },
+    })
+
+    return penpalConnection
+  }
+
+  // Initial connection
+  createConnection()
+
+  // Reconnect on iframe load (for MPA remotes that do full page reloads)
+  let isInitialLoad = true
+  iframe.addEventListener('load', () => {
+    if (isInitialLoad) {
+      isInitialLoad = false
+      return
+    }
+    // Iframe reloaded (MPA navigation) — reconnect penpal
+    // TODO: MPA forward navigation doesn't work because we use replace() instead of push()
+    // to avoid double-back. Need a strategy to handle both back and forward with MPA iframes.
+    isMpaReload = true
+    createConnection()
   })
 
   if (messenger) {
@@ -171,7 +196,7 @@ onMounted(async () => {
     const timeoutPromise = new Promise((_, reject) => {
       timeoutId = setTimeout(() => reject(new Error('Connection timeout')), props.timeout)
     })
-    messenger.setConnection(Promise.race([penpalConnection.promise, timeoutPromise]))
+    messenger.setConnection(Promise.race([penpalConnection!.promise, timeoutPromise]))
   }
 })
 
