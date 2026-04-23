@@ -29,6 +29,7 @@ yarn add @sprlab/microfront
 | `@sprlab/microfront/vue/remote` | Vue 3 remote (sprRemote plugin, send, onMessage) |
 | `@sprlab/microfront/react/remote` | React remote (initReactRemote, createReactRouterAdapter) |
 | `@sprlab/microfront/angular/remote` | Angular remote (initAngularRemote, createAngularRouterAdapter) |
+| `@sprlab/microfront/mpa/remote` | MPA standalone remote (initMpaRemote, penpal bundled) |
 
 Legacy aliases (backward compatible):
 | `@sprlab/microfront/shell` | Same as `./vue/shell` |
@@ -195,24 +196,29 @@ connection?.onMessage((payload) => console.log(payload));
 
 ### Remote — MPA (Multi-Page Apps / SSR)
 
-For server-rendered apps (PHP, ASP, static HTML, etc.) that do full page reloads, include a `<script>` tag on each page:
+For server-rendered apps (PHP, ASP, static HTML, etc.) that do full page reloads. The MPA bundle includes penpal — no import map or external dependencies needed:
 
 ```html
-<script type="importmap">
-  { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
-</script>
 <script type="module">
-  import { initRemote } from '/path/to/dist/core.js'
-  initRemote({ appName: 'my-mpa-app' })
+  import { initMpaRemote } from '/path/to/mpa-remote.js'
+  initMpaRemote({ appName: 'my-mpa-app' })
 </script>
+```
+
+Or via npm with a bundler:
+
+```ts
+import { initMpaRemote } from '@sprlab/microfront/mpa/remote'
+initMpaRemote({ appName: 'my-mpa-app' })
 ```
 
 Features:
 - Messaging works on each page while connected
 - Height reporting works (ResizeObserver)
 - Route sync works — shell URL updates after each page load
-- Back navigation works (single click)
-- Known limitation: forward navigation doesn't work after leaving the MPA remote (e.g., back to Home then forward)
+- Back and forward navigation works within the MPA remote
+- Back to other shell pages works correctly
+- Known limitation: forward navigation after leaving the MPA remote (e.g., back to Home then forward) only reaches the first MPA page. This is inherent to iframes in SPAs — the iframe is destroyed when the shell component unmounts and recreated without its history when remounted.
 
 The shell automatically reconnects penpal after each iframe reload.
 

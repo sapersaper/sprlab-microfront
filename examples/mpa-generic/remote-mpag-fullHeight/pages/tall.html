@@ -10,9 +10,6 @@
     .content { padding: 16px; }
     .block { padding: 16px; margin: 8px 0; background: #f0f0f0; border-radius: 4px; }
   </style>
-  <script type="importmap">
-    { "imports": { "penpal": "https://esm.sh/penpal@7.0.6" } }
-  </script>
 </head>
 <body>
   <header>
@@ -55,8 +52,8 @@
   </div>
 
   <script type="module">
-    import { initRemote } from '/dist/core.js'
-    initRemote({ appName: 'remote-mpag-fullHeight' })
+    import { initMpaRemote } from '/dist/mpa-remote.js'
+    initMpaRemote({ appName: 'remote-mpag-fullHeight' })
   </script>
 </body>
 </html>

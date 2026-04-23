@@ -107,6 +107,7 @@ Full implementation status of `@sprlab/microfront` — framework-agnostic core w
   - [x] 15.4 v0.3.0 — Angular support (angular/remote)
   - [x] 15.5 v0.4.0 — MPA support (iframe load reconnection, route sync without router)
   - [x] 15.6 v0.4.1 — Fixed back/forward for all SPA frameworks (connectionTime grace period), MPA back works, MPA forward is known limitation
+  - [x] 15.7 v0.4.2 — MPA standalone bundle (mpa-remote.js with penpal bundled, no import map needed)
 
 - [ ]* 16. Optional: Property-based tests
   - [ ]* 16.1 History patch prevents history growth
