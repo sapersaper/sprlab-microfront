@@ -27,9 +27,10 @@ yarn add @sprlab/microfront
 | `@sprlab/microfront/core` | Framework-agnostic core (types, initRemote, utilities) |
 | `@sprlab/microfront/vue/shell` | Vue 3 shell (RemoteApp component, useRemote composable) |
 | `@sprlab/microfront/vue/remote` | Vue 3 remote (sprRemote plugin, send, onMessage) |
+| `@sprlab/microfront/nuxt2/shell` | Vue 2 / Nuxt 2 shell (RemoteApp component, createRemoteMessenger) |
 | `@sprlab/microfront/react/remote` | React remote (initReactRemote, createReactRouterAdapter) |
 | `@sprlab/microfront/angular/remote` | Angular remote (initAngularRemote, createAngularRouterAdapter) |
-| `@sprlab/microfront/mpa/remote` | MPA standalone remote (initMpaRemote, penpal bundled) |
+| `@sprlab/microfront/mpa/remote` | MPA standalone remote (initMpaRemote), single self-contained file |
 
 Legacy aliases (backward compatible):
 | `@sprlab/microfront/shell` | Same as `./vue/shell` |
@@ -114,6 +115,154 @@ The shell router needs a catch-all route:
 
 When `fullHeight` is enabled, the iframe takes at least 100% of its container height. If the remote content is taller, the iframe expands. On navigation, it resets and re-measures.
 
+### Shell (Vue 2 / Nuxt 2 host application)
+
+Same component, same props as the Vue 3 shell — Options API instead of Composition API.
+
+```js
+// plugins/microfront.client.js
+import Vue from 'vue'
+import { RemoteApp } from '@sprlab/microfront/nuxt2/shell'
+
+Vue.component('RemoteApp', RemoteApp)
+```
+
+```js
+// nuxt.config.js
+plugins: ['~/plugins/microfront.client'],
+build: {
+  // RemoteApp ships as an uncompiled Vue 2 SFC — your vue-loader compiles it
+  transpile: ['@sprlab/microfront']
+}
+```
+
+Wrap `<RemoteApp>` in `<client-only>`: an iframe has nothing to server-render, and the
+component is registered on the client only.
+
+```vue
+<!-- pages/ssio.vue -->
+<template>
+  <div style="height: calc(100vh - 60px)">
+    <client-only>
+      <RemoteApp
+        src="http://localhost:4444"
+        title="SSIO"
+        base-path="/ssio"
+        full-height
+      />
+    </client-only>
+  </div>
+</template>
+```
+
+#### Route synchronization in Nuxt 2 — required setup
+
+> **This is the one thing that will break if you skip it.** Read it before debugging
+> "the iframe reloads when I navigate".
+
+Nuxt 2 puts a `:key` on `<NuxtChild>` and that key defaults to `$route.path`
+(see `.nuxt/components/nuxt.js` → `routerViewKey`). So a plain
+`$router.push('/ssio/activations')` gives the page a new key, Nuxt destroys and
+re-creates it, the iframe is torn down and the remote reloads from scratch.
+
+Vue 3 shells don't have this problem: `<router-view>` in vue-router 4 has no key,
+so the same route record reuses the component instance.
+
+The fix is to make `/<basePath>` and `/<basePath>/*` produce a **stable key**. In
+Nuxt 2 you get that for free from file-based routing, by adding an empty catch-all
+child page next to the host page:
+
+```
+pages/ssio.vue      → renders <RemoteApp base-path="/ssio" />
+pages/ssio/_.vue    → empty, <div /> is enough
+```
+
+That generates one parent route with a catch-all child:
+
+```js
+{ path: '/ssio', component: SsioPage, children: [{ path: '*', component: SsioCatchAll }] }
+```
+
+and the key resolves to `/ssio` for every path under it:
+
+| URL | `$route.matched.length` | Key Nuxt computes |
+|-----|-------------------------|-------------------|
+| `/ssio` | 1 | `$route.path` → `/ssio` |
+| `/ssio/activations` | 2 | `compile(matched[0].path)(params)` → `/ssio` |
+| `/ssio/a/b` | 2 | `/ssio` |
+
+Same key on every path ⇒ the page instance, the iframe and the penpal connection
+all survive navigation.
+
+Notes:
+- `pages/ssio.vue` must **not** render `<nuxt-child>`. The remote content lives in
+  the iframe; the catch-all page exists only to shape the route table.
+- Don't use `extendRoutes` with a `/ssio/*` sibling route. A sibling is a *different*
+  route record, so the component is swapped and you're back to a destroyed iframe.
+- Don't sync the URL with `history.replaceState`. It dodges the re-mount but takes
+  the URL out of Vue Router's hands, which breaks active-link state, back/forward
+  and any middleware or guard that reads the route.
+- Vue Router 3 exposes catch-all segments as `params.pathMatch`; `RemoteApp` reads it
+  for you.
+
+#### createRemoteMessenger (status + messaging)
+
+The Vue 2 counterpart of `useRemote()`. Provide it under the `'remote-messenger'` key and
+`RemoteApp` will pick it up via `inject`.
+
+```vue
+<template>
+  <div>
+    <p v-if="isLoading">Connecting…</p>
+    <p v-else-if="isError">SSIO is unreachable</p>
+    <p v-else-if="isNoPlugin">SSIO is missing the sprRemote plugin</p>
+    <button v-if="isConnected" @click="ping">Send</button>
+
+    <client-only>
+      <RemoteApp :src="src" title="SSIO" base-path="/ssio" full-height />
+    </client-only>
+  </div>
+</template>
+
+<script>
+import { createRemoteMessenger } from '@sprlab/microfront/nuxt2/shell'
+
+export default {
+  provide() {
+    return { 'remote-messenger': this.remoteMessenger }
+  },
+  data() {
+    // Must be in data(): that's what makes it reactive in Vue 2
+    return { remoteMessenger: createRemoteMessenger() }
+  },
+  computed: {
+    isLoading() { return this.remoteMessenger.status === 'loading' },
+    isConnected() { return this.remoteMessenger.status === 'connected' },
+    isError() { return this.remoteMessenger.status === 'error' },
+    isNoPlugin() { return this.remoteMessenger.status === 'no-plugin' }
+  },
+  methods: {
+    ping() { this.remoteMessenger.send({ hello: 'from shell' }) }
+  }
+}
+</script>
+```
+
+**Put the messenger in `data()`.** `status` and `iframeLoaded` are deliberately plain
+properties rather than getters, because Vue 2 makes a property reactive by installing its
+own accessor pair over it — something it cannot do to a getter backed by a closure. Held
+anywhere other than `data()`, the object is inert and your template never updates.
+
+Prefer `status` over `iframeLoaded`; the latter only exists to tell `error` (server
+unreachable) apart from `no-plugin` (server answered, plugin missing).
+
+| Method | Description |
+|--------|-------------|
+| `send(payload)` | Send a message to the remote |
+| `onMessage(handler)` | Messages from the remote — `(payload, metadata)` |
+| `onRouteChange(handler)` | Route changes reported by the remote |
+| `onStatusChange(handler)` | Connection status transitions |
+
 ### Remote — Vue 3
 
 ```ts
@@ -196,7 +345,7 @@ connection?.onMessage((payload) => console.log(payload));
 
 ### Remote — MPA (Multi-Page Apps / SSR)
 
-For server-rendered apps (PHP, ASP, static HTML, etc.) that do full page reloads. The MPA bundle includes penpal — no import map or external dependencies needed:
+For server-rendered apps (PHP, ASP, static HTML, etc.) that do full page reloads. This entry point is a single self-contained file — no import map, no bundler, no dependencies — so it can be dropped in with a plain `<script type="module">`:
 
 ```html
 <script type="module">
@@ -242,13 +391,15 @@ plugins: [
   { src: '~/plugins/microfront.client.js', mode: 'client' }
 ],
 build: {
-  transpile: ['@sprlab/microfront', 'penpal']
+  transpile: ['@sprlab/microfront']
 }
 ```
 
 ## API Reference
 
-### RemoteApp component (`@sprlab/microfront/vue/shell`)
+### RemoteApp component
+
+Same props for `@sprlab/microfront/vue/shell` (Vue 3) and `@sprlab/microfront/nuxt2/shell` (Vue 2 / Nuxt 2).
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -258,6 +409,9 @@ build: {
 | `timeout` | `number` | `10000` | Connection timeout in ms |
 | `allowedOrigins` | `string[]` | `['*']` | Allowed origins for postMessage |
 | `fullHeight` | `boolean` | `false` | Iframe fills container, expands for tall content |
+
+Nuxt 2 route sync has a mandatory routing setup — see
+[Route synchronization in Nuxt 2](#route-synchronization-in-nuxt-2--required-setup).
 
 ### useRemote() composable (`@sprlab/microfront/vue/shell`)
 
@@ -333,7 +487,18 @@ The old paths (`/shell`, `/remote`) still work as aliases.
 
 ## Dependencies
 
-- [penpal](https://github.com/Aaronius/penpal) — Promise-based iframe messaging
+**None.** Installing this package pulls in nothing else.
+
+[penpal](https://github.com/Aaronius/penpal) (promise-based iframe messaging) is used
+internally and **bundled into every build output**, so you never install, import or
+resolve it yourself.
+
+That's deliberate: penpal ships as an exports-only package with no `main` field, which
+webpack 4 (Nuxt 2) cannot resolve. Leaving it external forced every consumer to add
+penpal as a dependency plus a resolver alias. Bundling keeps it an implementation
+detail. It costs ~13 kB (~4.5 kB gzipped) in one shared chunk, not per entry point.
+
+`vue` and `vue-router` are the only external imports, and both are optional peers.
 
 ## License
 

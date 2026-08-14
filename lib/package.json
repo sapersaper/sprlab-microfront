@@ -18,7 +18,10 @@
     "penpal"
   ],
   "files": [
-    "dist"
+    "dist",
+    "nuxt2",
+    "src/nuxt2-shell",
+    "!src/nuxt2-shell/__tests__"
   ],
   "exports": {
     "./core": {
@@ -56,6 +59,10 @@
     "./mpa/remote": {
       "types": "./dist/mpa/remote.d.ts",
       "default": "./dist/mpa-remote.js"
+    },
+    "./nuxt2/shell": {
+      "types": "./nuxt2/shell.d.ts",
+      "default": "./nuxt2/shell.js"
     }
   },
   "scripts": {
