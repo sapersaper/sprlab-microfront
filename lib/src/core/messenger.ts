@@ -1,19 +1,37 @@
-import type { ConnectionStatus, MessageEnvelope, MessageHandler, RouteChangeHandler, Messenger } from './types'
+import { ConnectionStatus } from './types'
+import type {
+  MessageEnvelope,
+  MessageHandler,
+  RouteChangeHandler,
+  StatusChangeHandler,
+  Messenger,
+} from './types'
 
 /**
- * Creates a standalone messaging controller (used by Vue's useRemote).
- * Framework-agnostic — uses plain values instead of Vue refs.
+ * Creates a standalone messaging controller used by the framework wrappers.
+ * Framework-agnostic — plain values instead of Vue refs.
+ *
+ * `status` lives in a closure, so subscribe with `onStatusChange` to observe it.
+ * That is the single place where the status rule is defined; wrappers mirror it
+ * into their own reactivity system rather than re-deriving it.
  */
 export function createMessenger(): Messenger {
   let remotePromise: Promise<unknown> | null = null
-  let status: ConnectionStatus = 'loading' as ConnectionStatus
+  let status: ConnectionStatus = ConnectionStatus.Loading
   let iframeLoaded = false
   const messageHandlers: MessageHandler[] = []
   const routeChangeHandlers: RouteChangeHandler[] = []
+  const statusChangeHandlers: StatusChangeHandler[] = []
+
+  const setStatus = (next: ConnectionStatus) => {
+    if (next === status) return
+    status = next
+    statusChangeHandlers.forEach((handler) => handler(next))
+  }
 
   const messenger: Messenger = {
     get status() { return status },
-    set status(value: ConnectionStatus) { status = value },
+    set status(value: ConnectionStatus) { setStatus(value) },
 
     get iframeLoaded() { return iframeLoaded },
     set iframeLoaded(value: boolean) { iframeLoaded = value },
@@ -25,11 +43,11 @@ export function createMessenger(): Messenger {
     setConnection(promise: Promise<unknown>) {
       remotePromise = promise
       promise
-        .then(() => { status = 'connected' as ConnectionStatus })
+        .then(() => setStatus(ConnectionStatus.Connected))
         .catch(() => {
-          status = iframeLoaded
-            ? 'no-plugin' as ConnectionStatus
-            : 'error' as ConnectionStatus
+          // A loaded iframe that never answered means the remote is missing the plugin;
+          // an iframe that never loaded means the server is unreachable.
+          setStatus(iframeLoaded ? ConnectionStatus.NoPlugin : ConnectionStatus.Error)
         })
     },
 
@@ -56,6 +74,10 @@ export function createMessenger(): Messenger {
 
     onRouteChange(handler: RouteChangeHandler) {
       routeChangeHandlers.push(handler)
+    },
+
+    onStatusChange(handler: StatusChangeHandler) {
+      statusChangeHandlers.push(handler)
     },
   }
 

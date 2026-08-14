@@ -45,6 +45,32 @@ describe('observeContentHeight', () => {
     cleanup()
   })
 
+  it('should report the initial height even when the document measures 0', () => {
+    // Regression guard: seeding lastHeight with 0 instead of a sentinel made the
+    // initial report silently vanish for a 0-height document.
+    const spy = vi.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(0)
+    const callback = vi.fn()
+
+    const cleanup = observeContentHeight(callback)
+
+    expect(callback).toHaveBeenCalledWith(0)
+
+    cleanup()
+    spy.mockRestore()
+  })
+
+  it('should not report the same height twice in a row', () => {
+    const spy = vi.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(500)
+    const callback = vi.fn()
+
+    const cleanup = observeContentHeight(callback)
+    expect(callback).toHaveBeenCalledTimes(1)
+    expect(callback).toHaveBeenCalledWith(500)
+
+    cleanup()
+    spy.mockRestore()
+  })
+
   it('should return a cleanup function', () => {
     const callback = vi.fn()
     const cleanup = observeContentHeight(callback)
@@ -134,6 +160,53 @@ describe('createMessenger', () => {
 
     expect(handler1).toHaveBeenCalledWith(envelope.payload, envelope.metadata)
     expect(handler2).toHaveBeenCalledWith(envelope.payload, envelope.metadata)
+  })
+
+  it('should notify onStatusChange subscribers when the connection resolves', async () => {
+    const messenger = createMessenger()
+    const handler = vi.fn()
+
+    messenger.onStatusChange(handler)
+    messenger.setConnection(Promise.resolve({}))
+    await new Promise((r) => setTimeout(r, 0))
+
+    expect(handler).toHaveBeenCalledWith(ConnectionStatus.Connected)
+  })
+
+  it('should notify onStatusChange subscribers with no-plugin when the iframe loaded', async () => {
+    const messenger = createMessenger()
+    const handler = vi.fn()
+
+    messenger.onStatusChange(handler)
+    messenger.setIframeLoaded()
+    messenger.setConnection(Promise.reject(new Error('fail')))
+    await new Promise((r) => setTimeout(r, 0))
+
+    expect(handler).toHaveBeenCalledWith(ConnectionStatus.NoPlugin)
+  })
+
+  it('should notify every onStatusChange subscriber', async () => {
+    const messenger = createMessenger()
+    const first = vi.fn()
+    const second = vi.fn()
+
+    messenger.onStatusChange(first)
+    messenger.onStatusChange(second)
+    messenger.setConnection(Promise.resolve({}))
+    await new Promise((r) => setTimeout(r, 0))
+
+    expect(first).toHaveBeenCalledWith(ConnectionStatus.Connected)
+    expect(second).toHaveBeenCalledWith(ConnectionStatus.Connected)
+  })
+
+  it('should not notify when the status is set to its current value', () => {
+    const messenger = createMessenger()
+    const handler = vi.fn()
+
+    messenger.onStatusChange(handler)
+    messenger.status = ConnectionStatus.Loading
+
+    expect(handler).not.toHaveBeenCalled()
   })
 
   it('should broadcast route changes to all registered handlers', () => {

@@ -4,7 +4,9 @@
  * Returns a cleanup function that disconnects the observer.
  */
 export function observeContentHeight(onHeight: (height: number) => void): () => void {
-  let lastHeight = 0
+  // Sentinel, not 0: a document whose initial scrollHeight is 0 must still get its
+  // initial report. Seeding with 0 silently swallowed it.
+  let lastHeight: number | null = null
 
   const check = () => {
     const height = document.documentElement.scrollHeight

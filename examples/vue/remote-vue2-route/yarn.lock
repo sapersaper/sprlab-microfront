@@ -2472,7 +2472,7 @@ __metadata:
 
 "@sprlab/microfront@file:../../../lib::locator=remote-vue2-route%40workspace%3A.":
   version: 0.4.2
-  resolution: "@sprlab/microfront@file:../../../lib#../../../lib::hash=011576&locator=remote-vue2-route%40workspace%3A."
+  resolution: "@sprlab/microfront@file:../../../lib#../../../lib::hash=903fa7&locator=remote-vue2-route%40workspace%3A."
   peerDependencies:
     vue: ^3.0.0
     vue-router: ^4.0.0 || ^5.0.0
@@ -2481,7 +2481,7 @@ __metadata:
       optional: true
     vue-router:
       optional: true
-  checksum: 10c0/474341bfb819c6e582198f6b293a88021cf34c2b10c2de3ab5788a07d8a2439f98cfe2b8b06bcf5242ef93c6d076aacfd20940ce428df84c68330abfd0dae4f7
+  checksum: 10c0/86710e8c896fd6cc93159aa4b52b301a131d8ac342f8981b898f67820e9f26a6fe4d17a40fe27e107a1564f8f725bc0c3e66bb7808a9f8e9a76ef668efe71c5a
   languageName: node
   linkType: hard
 
