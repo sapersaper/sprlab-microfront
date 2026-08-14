@@ -22,6 +22,7 @@ export interface MessageEnvelope {
 
 export type MessageHandler = (payload: unknown, metadata: { appName: string }) => void
 export type RouteChangeHandler = (path: string) => void
+export type StatusChangeHandler = (status: ConnectionStatus) => void
 
 /** Framework-neutral router adapter for route synchronization */
 export interface RouterAdapter {
@@ -73,4 +74,12 @@ export interface Messenger {
   handleRouteChange(path: string): void
   onMessage(handler: MessageHandler): void
   onRouteChange(handler: RouteChangeHandler): void
+  /**
+   * Registers a callback invoked whenever `status` changes.
+   *
+   * The messenger holds `status` in a closure, which no framework can observe on
+   * its own. Without this hook every wrapper has to re-derive the status from the
+   * connection promise, duplicating the rule.
+   */
+  onStatusChange(handler: StatusChangeHandler): void
 }
