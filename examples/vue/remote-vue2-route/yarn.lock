@@ -2472,9 +2472,7 @@ __metadata:
 
 "@sprlab/microfront@file:../../../lib::locator=remote-vue2-route%40workspace%3A.":
   version: 0.4.2
-  resolution: "@sprlab/microfront@file:../../../lib#../../../lib::hash=2bc45b&locator=remote-vue2-route%40workspace%3A."
-  dependencies:
-    penpal: "npm:^7.0.6"
+  resolution: "@sprlab/microfront@file:../../../lib#../../../lib::hash=011576&locator=remote-vue2-route%40workspace%3A."
   peerDependencies:
     vue: ^3.0.0
     vue-router: ^4.0.0 || ^5.0.0
@@ -2483,7 +2481,7 @@ __metadata:
       optional: true
     vue-router:
       optional: true
-  checksum: 10c0/60a2a5923b51a0f684963e7f9de77497af1dcf051baddbfcc63f34b1bdf59e80f315ec2e244e9be43be013cba9ea12e1df69632cc32595cf3be3a7f5843fe7db
+  checksum: 10c0/474341bfb819c6e582198f6b293a88021cf34c2b10c2de3ab5788a07d8a2439f98cfe2b8b06bcf5242ef93c6d076aacfd20940ce428df84c68330abfd0dae4f7
   languageName: node
   linkType: hard
 
@@ -8395,13 +8393,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"penpal@npm:^7.0.6":
-  version: 7.0.6
-  resolution: "penpal@npm:7.0.6"
-  checksum: 10c0/008a9e279747aba3b89225b2dc87af8bf9791640ad8a8c894bca23bd8a3e78b7b74924402c80d6088a87241356ac222acd86b2019c0695b4bc224a9126bc47a5
-  languageName: node
-  linkType: hard
-
 "picocolors@npm:^0.2.1":
   version: 0.2.1
   resolution: "picocolors@npm:0.2.1"
@@ -9998,7 +9989,6 @@ __metadata:
   dependencies:
     "@sprlab/microfront": "file:../../../lib"
     nuxt: "npm:^2.18.1"
-    penpal: "npm:^7.0.6"
   languageName: unknown
   linkType: soft
 

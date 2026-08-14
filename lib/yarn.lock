@@ -311,7 +311,7 @@ __metadata:
     "@vitejs/plugin-vue": "npm:^6.0.6"
     "@vue/test-utils": "npm:^2.4.6"
     happy-dom: "npm:^18.0.1"
-    penpal: "npm:^7.0.6"
+    penpal: "npm:7.0.6"
     typescript: "npm:^6.0.2"
     vite: "npm:^8.0.8"
     vitest: "npm:^4.1.4"
@@ -1475,7 +1475,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"penpal@npm:^7.0.6":
+"penpal@npm:7.0.6":
   version: 7.0.6
   resolution: "penpal@npm:7.0.6"
   checksum: 10c0/008a9e279747aba3b89225b2dc87af8bf9791640ad8a8c894bca23bd8a3e78b7b74924402c80d6088a87241356ac222acd86b2019c0695b4bc224a9126bc47a5
