@@ -17,10 +17,11 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: [
-        'vue', 'vue-router',
-        'penpal',
-      ],
+      // penpal is deliberately NOT external: it is bundled in.
+      // It ships as an exports-only package with no `main` field, which webpack 4
+      // (Nuxt 2) cannot resolve. Bundling keeps it an implementation detail instead
+      // of forcing every consumer to install penpal and alias it.
+      external: ['vue', 'vue-router'],
       output: {
         entryFileNames: '[name].js',
       },
