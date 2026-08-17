@@ -2,7 +2,8 @@
 
 Micro frontend library using iframes with automatic resizing, bidirectional messaging, and route synchronization.
 
-Supports Vue 3, Vue 2 / Nuxt 2, React, and Angular remotes from a single Vue 3 shell.
+Supports Vue 3, Vue 2 / Nuxt 2, React, and Angular remotes, hosted from either a Vue 3
+or a Nuxt 2 shell.
 
 For the library documentation, see [lib/README.md](lib/README.md).
 
@@ -18,6 +19,7 @@ For the library documentation, see [lib/README.md](lib/README.md).
 ├── examples/
 │   ├── vue/
 │   │   ├── shell/                — Vue 3 host app (port 4000)
+│   │   ├── shell-nuxt2/          — Nuxt 2 host app, SSR (port 4008)
 │   │   ├── remote-vue-connection/      (4001)
 │   │   ├── remote-vue-route/           (4002)
 │   │   ├── remote-vue-fullHeight/      (4004)
@@ -49,8 +51,11 @@ yarn install:all
 # Run Vue 3 examples
 yarn dev
 
-# Run Nuxt 2 examples
+# Run Nuxt 2 remotes (Vue 3 shell)
 yarn dev:vue2
+
+# Run the Nuxt 2 shell hosting the Vue 3 remotes
+yarn dev:nuxt2-shell
 
 # Run React examples
 yarn dev:react
@@ -74,6 +79,9 @@ yarn build
 # Run unit tests
 yarn test
 
+# Run the Nuxt 2 shell e2e suite (needs `yarn dev:nuxt2-shell` in another terminal)
+yarn test:e2e:nuxt2-shell
+
 # Switch examples to local lib (for development)
 yarn use:local
 yarn install:all
@@ -85,6 +93,15 @@ yarn install:all
 # Kill all dev server ports
 yarn kill-ports
 ```
+
+### E2E suites
+
+`e2e/nuxt2-shell.test.ts` covers the Nuxt 2 shell: SSR, route sync in both directions,
+iframe survival across navigation, connection status, messaging and fullHeight.
+
+`e2e/e2e.test.ts` is **stale** — it targets a shell layout that no longer exists
+(`/remote1`, `/remote2`, `/remote3`, renamed during the library restructure) and fails
+wholesale. It needs rewriting against the current routes.
 
 ## Publishing
 
